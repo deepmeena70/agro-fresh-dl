@@ -1,12 +1,18 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+// components
+import SecondaryHeader from '../components//SecondaryHeader'
 
-export default function MyOrdersScreen() {
+export default function MyOrdersScreen({navigation}) {
     return (
-        <View>
-            <Text></Text>
+        <View style={styles.container}>
+            <SecondaryHeader navigation={navigation} screenName="My Orders" />
         </View>
     )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+    container: {
+        flex:1
+    }
+})

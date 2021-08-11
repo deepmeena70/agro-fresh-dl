@@ -28,20 +28,20 @@ export default function PrimaryHeader(props) {
                     color="#37c7ad"
                     style={{ paddingLeft:10, marginRight:135 }}
                     size={24}
-                    onPress={() => props.navigate.navigate('DeliveryLocation')}
+                    onPress={() => navigation.navigate('Location')}
                 />
                 <MaterialCommunityIcons 
                     name="bell"
                     color="#37c7ad"
                     size={22}
-                    onPress={() => props.navigate.navigate('Notifications')}
+                    onPress={() => navigation.navigate('Notification')}
                 />
                 <MaterialCommunityIcons 
                     name="cart"
                     color="#37c7ad"
                     style={{ paddingLeft:20}}
                     size={22}
-                    onPress={() => props.navigate.navigate('Cart')}
+                    onPress={() => navigation.navigate('Cart')}
                 />
             </View>
 

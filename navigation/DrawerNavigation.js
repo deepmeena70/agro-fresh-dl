@@ -13,6 +13,9 @@ import AccountScreen from '../screens/AccountScreen'
 import OrderCategoryScreen from '../screens/OrderCategoryScreen'
 import FreshBasketScreen from '../screens/FreshBasketScreen'
 import OffersScreen from '../screens/OffersScreen'
+import NotificationScreen from '../screens/NotificationScreen'
+import CartScreen from '../screens/CartScreen'
+import LocationScreen from '../screens/LocationScreen'
 
 
 const Drawer = createDrawerNavigator();
@@ -32,6 +35,9 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="OrderCategory" component={OrderCategoryScreen} />
             <Drawer.Screen name="FreshBasket" component={FreshBasketScreen} />
             <Drawer.Screen name="Offers" component={OffersScreen} />
+            <Drawer.Screen name="Notification" component={NotificationScreen} />
+            <Drawer.Screen name="Cart" component={CartScreen} />
+            <Drawer.Screen name="Location" component={LocationScreen} />
         </Drawer.Navigator>
     )
 }

@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         flex:1
     },
     homeContainer:{
-        flex:1,
+        height: 700,
         alignItems:'center',
       },
       image:{
