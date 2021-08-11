@@ -16,6 +16,8 @@ import OffersScreen from '../screens/OffersScreen'
 import NotificationScreen from '../screens/NotificationScreen'
 import CartScreen from '../screens/CartScreen'
 import LocationScreen from '../screens/LocationScreen'
+import LoginScreen from '../screens/auth/LoginScreen'
+import RegistrationScreen from '../screens/auth/RegistrationScreen'
 
 
 const Drawer = createDrawerNavigator();
@@ -38,6 +40,8 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="Notification" component={NotificationScreen} />
             <Drawer.Screen name="Cart" component={CartScreen} />
             <Drawer.Screen name="Location" component={LocationScreen} />
+            <Drawer.Screen name="Login" component={LoginScreen} />
+            <Drawer.Screen name="Register" component={RegistrationScreen} />
         </Drawer.Navigator>
     )
 }

@@ -18,44 +18,44 @@ export default function VegetablesScreen({navigation}) {
 
     return (
         <ScrollView style={styles.container}>
-                <View style={styles.card}>
-                    <View style={styles.productContainer}>
-                        <Image 
-                            source={{ uri:'https://images.unsplash.com/photo-1577028300036-aa112c18d109?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80' }}
-                            style={ styles.thumbnail }
-                        />
-                        <View style={styles.productDescription}>
-                            <Text style={ styles.prodTitle }>Apple (Green)</Text>
-                            <View style={ styles.priceContainer }>
-                                <Text style={ styles.rate }>₹ 170/kg</Text>
-                                <Text style = { styles.discountRate }>₹ 150/kg</Text>
-                            </View>
-                            <View style={ styles.pickerContainer }>
-                                <Picker
-                                    ref={pickerRef}
-                                    selectedValue={selectedValue}
-                                    onValueChange={(itemValue, itemIndex) =>
-                                        setSelectedValue(itemValue)
-                                    }
-                                    style={ styles.picker }
-                                    >
-                                    <Picker.Item  style={ styles.pickerItem } label="1 kg" value="1" />
-                                    <Picker.Item  style={ styles.pickerItem } label="2 kg" value="2" />
-                                </Picker>
-                            </View>
-                            <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
+            <View style={styles.card}>
+                <View style={styles.productContainer}>
+                    <Image 
+                        source={{ uri:'https://images.unsplash.com/photo-1577028300036-aa112c18d109?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80' }}
+                        style={ styles.thumbnail }
+                    />
+                    <View style={styles.productDescription}>
+                        <Text style={ styles.prodTitle }>Apple (Green)</Text>
+                        <View style={ styles.priceContainer }>
+                            <Text style={ styles.rate }>₹ 170/kg</Text>
+                            <Text style = { styles.discountRate }>₹ 150/kg</Text>
                         </View>
-                        <Button 
-                        mode="contained" 
-                        onPress={() => console.log('Pressed')}
-                        color="#37c7ad"
-                        labelStyle={{ color:"#fff" }}
-                        >
-                            Buy
-                        </Button>
+                        <View style={ styles.pickerContainer }>
+                            <Picker
+                                ref={pickerRef}
+                                selectedValue={selectedValue}
+                                onValueChange={(itemValue, itemIndex) =>
+                                    setSelectedValue(itemValue)
+                                }
+                                style={ styles.picker }
+                                >
+                                <Picker.Item  style={ styles.pickerItem } label="1 kg" value="1" />
+                                <Picker.Item  style={ styles.pickerItem } label="2 kg" value="2" />
+                            </Picker>
+                        </View>
+                        <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
                     </View>
+                    <Button 
+                    mode="contained" 
+                    onPress={() => console.log('Pressed')}
+                    color="#37c7ad"
+                    labelStyle={{ color:"#fff" }}
+                    >
+                        Buy
+                    </Button>
                 </View>
-            </ScrollView>
+            </View>
+        </ScrollView>
     )
 }
 
