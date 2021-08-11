@@ -20,29 +20,31 @@ export default function PrimaryHeader(props) {
                     onPress={action}
                 />
                 <View style={{ paddingLeft: 12}}>
-                    <Text style={styles.location}>Kota</Text>
+                    <Text style={styles.location}>Baran</Text>
                     <Text style={styles.subLocation}>Rajasthan</Text>
                 </View>
                 <MaterialCommunityIcons 
                     name="pencil"
                     color="#37c7ad"
-                    style={{ paddingLeft:10, marginRight:135 }}
+                    style={{ paddingLeft:10 }}
                     size={24}
                     onPress={() => navigation.navigate('Location')}
                 />
-                <MaterialCommunityIcons 
-                    name="bell"
-                    color="#37c7ad"
-                    size={22}
-                    onPress={() => navigation.navigate('Notification')}
-                />
-                <MaterialCommunityIcons 
-                    name="cart"
-                    color="#37c7ad"
-                    style={{ paddingLeft:20}}
-                    size={22}
-                    onPress={() => navigation.navigate('Cart')}
-                />
+                <View style={styles.rightIconContainers}>
+                  <MaterialCommunityIcons 
+                      name="bell"
+                      color="#37c7ad"
+                      size={22}
+                      onPress={() => navigation.navigate('Notification')}
+                  />
+                  <MaterialCommunityIcons 
+                      name="cart"
+                      color="#37c7ad"
+                      style={{ paddingLeft:20}}
+                      size={22}
+                      onPress={() => navigation.navigate('Cart')}
+                  />
+                </View>
             </View>
 
             <View style={styles.inputContainer} >
@@ -68,15 +70,21 @@ const styles = StyleSheet.create({
     //   backgroundColor: 'grey',
       height:150,
       paddingTop:50,
-      paddingLeft:20,
-      paddingRight:20,
+      paddingLeft:12,
+      paddingRight:12,
     },
     location: {
-      fontSize:20,
+      fontSize:18,
       color: '#37C7AD'
     },
     subLocation:{
+      fontSize:12,
       color: '#37C7AD'
+    },
+    rightIconContainers: { 
+      flex:1, 
+      flexDirection: 'row' , 
+      justifyContent:'flex-end'
     },
     inputContainer:{
       height:34,
@@ -90,4 +98,5 @@ const styles = StyleSheet.create({
       paddingLeft:20,
       flex:1
     },
+
   })
