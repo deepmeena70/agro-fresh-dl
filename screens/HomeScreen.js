@@ -1,10 +1,19 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
+import {useDispatch, useSelector} from 'react-redux'
+
+
 
 // components
 import PrimaryHeader from '../components/PrimaryHeader'
 
+
 export default function HomeScreen({ navigation }) {
+
+    const dispatch = useDispatch()
+
+
+    
     return (
         <View style={styles.container}>
             <PrimaryHeader navigation={navigation} />

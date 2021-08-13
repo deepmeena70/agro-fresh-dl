@@ -1,11 +1,7 @@
 import firebase from 'firebase/app'
-
-// Optionally import the services that you want to use
-import "firebase/auth";
-//import "firebase/database";
-import "firebase/firestore";
-//import "firebase/functions";
-//import "firebase/storage";
+import 'firebase/auth'
+import 'firebase/storage'
+import 'firebase/firestore'
 
 // Initialize Firebase
 const firebaseConfig = {

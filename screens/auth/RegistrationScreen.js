@@ -3,14 +3,23 @@ import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import firebase from '../../firebase'
 
+import {useDispatch, useSelector} from 'react-redux'
+import {signingIn, fetchUser, userSelector} from '../../features/user'
+
 export default function LoginScreen({navigation}) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const onSignUp = () => {
-    firebase
+  const dispatch = useDispatch()
+  const {user,loading, hasErrors, signIn} = useSelector(userSelector)
+
+  const onSignUp = async () => {
+    if(signIn) {
+        console.log('You already signIn')
+    } else {
+        firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(() => {
@@ -19,9 +28,13 @@ export default function LoginScreen({navigation}) {
                 .collection('users')
                 .doc(firebase.auth().currentUser.uid)
                 .set({name,email,phone})
-                .then(() => {navigation.navigate('Home')})
+                .then(() => {
+                    dispatch(signingIn())
+                    navigation.navigate('Home')
+                })
         })
         .catch((error)=> console.log(error))
+    }
   }
 
   return (
