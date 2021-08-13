@@ -28,17 +28,11 @@ export default function DrawerContent(props) {
   const {navigation} = props;
   
 
-  // console.log("user =>",user)
-  // console.log("userData =>", userData)
-
   const userName = () => {
-    if(userData) {
-      const name = String(userData.name);
-      const nameArray = name.split('');
+      const nameArray = String(userData.name).split('');
       return nameArray[0];
-    }
-    return '...';
   }
+
 
   const onLogout = () => {
     dispatch(clearUser());
@@ -55,13 +49,12 @@ export default function DrawerContent(props) {
         
         <View style={styles.userInfoSection}>
           <Avatar.Text
-            label={!user ? 'G' : userName()}
+            label={!userData ? 'G' : userName()}
             style={{ backgroundColor: "#37C7AD"}}
             color='#fff'
           />
           <Title style={styles.title}>
-            {!user && 'Guest'}
-            {user && (!userData ? '...' : userData.name)}
+            {userData ? userData.name : 'Guest' }
           </Title>
         </View> 
         

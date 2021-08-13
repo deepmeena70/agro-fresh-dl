@@ -1,8 +1,7 @@
 import React, {useEffect} from 'react'
 import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
 import {useDispatch, useSelector} from 'react-redux'
-
-
+import {signingIn, fetchUser, userSelector} from '../features/user'
 
 // components
 import PrimaryHeader from '../components/PrimaryHeader'
@@ -11,9 +10,8 @@ import PrimaryHeader from '../components/PrimaryHeader'
 export default function HomeScreen({ navigation }) {
 
     const dispatch = useDispatch()
+    const {user,loading, hasErrors, signIn} = useSelector(userSelector)
 
-
-    
     return (
         <View style={styles.container}>
             <PrimaryHeader navigation={navigation} />
@@ -64,7 +62,7 @@ export default function HomeScreen({ navigation }) {
                     </Pressable>
                     <Pressable
                         style={{ flex:1 }}
-                        onPress={() => navigation.navigate('Offers')}
+                        onPress={() => (signIn)?(navigation.navigate('Offers')):(console.log("sign in first"))}
                     >
                         <View style={styles.items}>
                         <Image

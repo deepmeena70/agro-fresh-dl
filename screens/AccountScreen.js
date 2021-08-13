@@ -2,29 +2,41 @@ import React from 'react'
 import { View, Text, StyleSheet, Button } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
+import {useDispatch, useSelector} from 'react-redux'
+import {fetchUser,clearUser, userSelector} from '../features/user'
+import {userDataSelector, fetchUserData} from '../features/userData'
 
 export default function AccountScreen({navigation}) {
+    const {user,loading, hasErrors, signIn} = useSelector(userSelector)
+    const {userData, userDataLoading, hasUserDataErrors} = useSelector(userDataSelector)
+
+    const userName = () => {
+        const nameArray = String(userData.name).split('');
+        return nameArray[0];
+    }
+
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.container1}>
                 <View style={{ flex:1, flexDirection: 'row'}}>
                     <MaterialCommunityIcons 
-                        name="arrow-left"
+                        name="menu"
                         size={28}
                         color="#fff"
                         style={{ marginLeft:12 }}
-                        onPress={()=> navigation.navigate('Home')}
+                        onPress={()=> navigation.toggleDrawer()}
                     />
                     <Text style={{ color:"#fff", paddingLeft:12, paddingTop: 2, fontSize:18 }}>My Account</Text>
                 </View>
                 <View style={{ flex:3, alignItems: 'center'}}>
                     <Avatar.Text 
                         size={80}
-                        label="AF"
+                        label={userName()}
                         color="#37c7ad"
                         style={{ backgroundColor:"#fff",marginTop:0 }}
                     />
-                    <Text style={styles.container1Text}>Agro FreshDL</Text>
+                    <Text style={styles.container1Text}>{userData?userData.name:''}</Text>
                     <View style={styles.container1Row}>
                         <Text style={styles.container1RowText}>Edit</Text>
                         <MaterialCommunityIcons 
@@ -43,7 +55,7 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>Agro FreshDL</Text>
+                    <Text style={styles.rowText}>{userData?userData.name:''}</Text>
                 </View>
                 <View style={styles.row}>
                     <MaterialCommunityIcons 
@@ -51,7 +63,7 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>8888899999</Text>
+                    <Text style={styles.rowText}>{userData?userData.phone:''}</Text>
                 </View>
                 <View style={styles.row}>
                     <MaterialCommunityIcons 
@@ -59,7 +71,7 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>agrofreshdl@xyz.com</Text>
+                    <Text style={styles.rowText}>{userData?userData.email:''}</Text>
                 </View>
                 <View style={styles.row}>
                     <MaterialCommunityIcons 
@@ -68,6 +80,7 @@ export default function AccountScreen({navigation}) {
                         color="grey"
                     />
                     <Text style={styles.rowText}>*********</Text>
+                    
                 </View>
                 <View style={styles.rowAddress}>
                     <MaterialCommunityIcons 

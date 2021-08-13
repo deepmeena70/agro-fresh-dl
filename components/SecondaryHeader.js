@@ -9,11 +9,11 @@ export default function SecondaryHeader(props) {
     return (
         <SafeAreaView style={ styles.header }>
             <MaterialCommunityIcons 
-                name="arrow-left"
+                name="menu"
                 size={28}
                 color="#fff"
                 style={{ paddingLeft:12, paddingTop: 5 }}
-                onPress={() =>navigation.navigate('Home')}
+                onPress={() =>navigation.toggleDrawer()}
             />
             <View style={ {flex:.88, alignItems: 'center'} }>
                 <Text style={ styles.headerText }>{screenName}</Text>

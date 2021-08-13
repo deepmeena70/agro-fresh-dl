@@ -56,8 +56,6 @@ export default function DrawerNavigation() {
         return   <Errors />
     }
 
-    
-
     return (
         <Drawer.Navigator 
             initialRouteName="Home" 
@@ -68,10 +66,10 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="AboutUs" component={AboutUsScreen} />
             <Drawer.Screen name="OrderCategory" component={OrderCategoryScreen} />
             <Drawer.Screen name="FreshBasket" component={FreshBasketScreen} />
-            <Drawer.Screen name="Account" component={AccountScreen} />
-            <Drawer.Screen name="MyOrders" component={MyOrdersScreen} />
             {signIn ? 
                  <>
+                    <Drawer.Screen name="MyOrders" component={MyOrdersScreen} />
+                    <Drawer.Screen name="Account" component={AccountScreen} />
                     <Drawer.Screen name="ReferAndEarn" component={ReferAndEarnScreen} />
                     <Drawer.Screen name="Offers" component={OffersScreen} />
                     <Drawer.Screen name="Notification" component={NotificationScreen} />
