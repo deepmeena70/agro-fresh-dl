@@ -1,12 +1,26 @@
-import React, {useState, useRef} from 'react';
+import React, {useState,useEffect, useRef} from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-export default function ExoticScreen({navigation}) {
+import { useSelector, useDispatch } from 'react-redux';
+import { exoticSelector, exoticClear, fetchRegExotic } from '../../features/exotic';
+
+export default function ExoticScreen({route, navigation}) {
 
     const [selectedValue, setSelectedValue] = useState("1")
     const pickerRef = useRef();
+
+    const dispatch = useDispatch();
+    const {exotic, exoticBulk, loadExotic, errorExotic} = useSelector(exoticSelector);
+
+    useEffect(() => {
+        dispatch(exoticClear())
+       if(route.name === 'Exotic') 
+            dispatch(fetchRegExotic())
+        else 
+            dispatch(fetchRegExotic('bulk'))
+    },[dispatch]);
 
     function open() {
     pickerRef.current.focus();
@@ -16,19 +30,28 @@ export default function ExoticScreen({navigation}) {
     pickerRef.current.blur();
     }
 
+    const products = () => {
+        if(route.name == 'FruitsBulk') {
+            return exoticBulk;
+        }
+        return exotic;
+    }
+
     return (
         <ScrollView style={styles.container}>
+        {products().map(product => 
+
             <View style={styles.card}>
                 <View style={styles.productContainer}>
                     <Image 
-                        source={{ uri:'https://images.unsplash.com/photo-1577028300036-aa112c18d109?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80' }}
+                        source={{ uri:product.imageURL }}
                         style={ styles.thumbnail }
                     />
                     <View style={styles.productDescription}>
-                        <Text style={ styles.prodTitle }>Apple (Green)</Text>
+                        <Text style={ styles.prodTitle }>{product.productName}</Text>
                         <View style={ styles.priceContainer }>
-                            <Text style={ styles.rate }>₹ 170/kg</Text>
-                            <Text style = { styles.discountRate }>₹ 150/kg</Text>
+                            <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                            <Text style = { styles.discountRate }>₹ {product.discountPrice}/kg</Text>
                         </View>
                         <View style={ styles.pickerContainer }>
                             <Picker
@@ -55,6 +78,9 @@ export default function ExoticScreen({navigation}) {
                     </Button>
                 </View>
             </View>
+
+
+        )}
         </ScrollView>
     )
 }

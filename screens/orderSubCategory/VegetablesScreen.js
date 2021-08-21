@@ -1,11 +1,28 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-export default function VegetablesScreen({navigation}) {
+import {fetchRegVeg, vegetableClear, vegetableSelector} from '../../features/vegetable';
+import {useSelector, useDispatch} from 'react-redux';
 
-    const [selectedValue, setSelectedValue] = useState("1")
+export default function VegetablesScreen({route, navigation}) {
+
+    const dispatch = useDispatch();
+
+    console.log('route from vegetable =>' , route.name);
+
+    const {vegetable, vegetableBulk, loadVegetable, errorVegetable} = useSelector(vegetableSelector);
+
+    useEffect(() => {
+        dispatch(vegetableClear())
+       if(route.name === 'Vegetables') 
+            dispatch(fetchRegVeg())
+        else 
+            dispatch(fetchRegVeg('bulk'))
+    },[dispatch]);
+
+    const [selectedValue, setSelectedValue] = useState("")
     const pickerRef = useRef();
 
     function open() {
@@ -16,45 +33,59 @@ export default function VegetablesScreen({navigation}) {
     pickerRef.current.blur();
     }
 
-    return (
+    const products = () => {
+        if(route.name == 'VegetablesBulk') {
+            return vegetableBulk;
+        }
+        return vegetable;
+    }
+
+    return ( 
         <ScrollView style={styles.container}>
-            <View style={styles.card}>
-                <View style={styles.productContainer}>
-                    <Image 
-                        source={{ uri:'https://images.unsplash.com/photo-1577028300036-aa112c18d109?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80' }}
-                        style={ styles.thumbnail }
-                    />
-                    <View style={styles.productDescription}>
-                        <Text style={ styles.prodTitle }>Apple (Green)</Text>
-                        <View style={ styles.priceContainer }>
-                            <Text style={ styles.rate }>₹ 170/kg</Text>
-                            <Text style = { styles.discountRate }>₹ 150/kg</Text>
+            {
+                products().map((product, key) => 
+
+                    <View style={styles.card} key={key}>
+                        <View style={styles.productContainer}>
+                            <Image 
+                                source={{ uri:product.imageURL }}
+                                style={ styles.thumbnail }
+                            />
+                            <View style={styles.productDescription}>
+                                <Text style={ styles.prodTitle }>{product.productName}</Text>
+                                <View style={ styles.priceContainer }>
+                                    <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                                    <Text style = { styles.discountRate }>₹ {product.discountPrice}/kg</Text>
+                                </View>
+                                <View style={ styles.pickerContainer }>
+                                    <Picker
+                                        ref={pickerRef}
+                                        selectedValue={selectedValue}
+                                        onValueChange={(itemValue, itemIndex) =>
+                                            setSelectedValue(itemValue)
+                                        }
+                                        style={ styles.picker }
+                                        >
+                                        <Picker.Item  style={ styles.pickerItem } label="1 kg" value="1" />
+                                        <Picker.Item  style={ styles.pickerItem } label="2 kg" value="2" />
+                                    </Picker>
+                                </View>
+                                <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
+                            </View>
+                            <Button 
+                            mode="contained" 
+                            onPress={() => console.log('Pressed')}
+                            color="#37c7ad"
+                            labelStyle={{ color:"#fff" }}
+                            >
+                                Buy
+                            </Button>
                         </View>
-                        <View style={ styles.pickerContainer }>
-                            <Picker
-                                ref={pickerRef}
-                                selectedValue={selectedValue}
-                                onValueChange={(itemValue, itemIndex) =>
-                                    setSelectedValue(itemValue)
-                                }
-                                style={ styles.picker }
-                                >
-                                <Picker.Item  style={ styles.pickerItem } label="1 kg" value="1" />
-                                <Picker.Item  style={ styles.pickerItem } label="2 kg" value="2" />
-                            </Picker>
-                        </View>
-                        <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
                     </View>
-                    <Button 
-                    mode="contained" 
-                    onPress={() => console.log('Pressed')}
-                    color="#37c7ad"
-                    labelStyle={{ color:"#fff" }}
-                    >
-                        Buy
-                    </Button>
-                </View>
-            </View>
+
+                    )
+            }
+        
         </ScrollView>
     )
 }
