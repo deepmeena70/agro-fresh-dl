@@ -22,7 +22,7 @@ export default function VegetablesScreen({route, navigation}) {
             dispatch(fetchRegVeg('bulk'))
     },[dispatch]);
 
-    const [selectedValue, setSelectedValue] = useState("")
+    const [selectedValue, setSelectedValue] = useState(null)
     const pickerRef = useRef();
 
     function open() {
@@ -66,8 +66,11 @@ export default function VegetablesScreen({route, navigation}) {
                                         }
                                         style={ styles.picker }
                                         >
-                                        <Picker.Item  style={ styles.pickerItem } label="1 kg" value="1" />
-                                        <Picker.Item  style={ styles.pickerItem } label="2 kg" value="2" />
+                                        { product.packageOf.map((item, index)=>{
+                                            return (
+                                                <Picker.Item key={index} style={ styles.pickerItem } label={`${item} kg`} value={item} />
+                                            )
+                                        })}
                                     </Picker>
                                 </View>
                                 <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
