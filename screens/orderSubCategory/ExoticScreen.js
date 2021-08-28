@@ -8,11 +8,14 @@ import { exoticSelector, exoticClear, fetchRegExotic } from '../../features/exot
 
 export default function ExoticScreen({route, navigation}) {
 
-    const [selectedValue, setSelectedValue] = useState(null)
+    const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
     const {exotic, exoticBulk, loadExotic, errorExotic} = useSelector(exoticSelector);
+
+    console.log('exotic=>',exotic)
+    console.log('exotic Bulk=>',exoticBulk);
 
     useEffect(() => {
         dispatch(exoticClear())
@@ -31,7 +34,7 @@ export default function ExoticScreen({route, navigation}) {
     }
 
     const products = () => {
-        if(route.name == 'FruitsBulk') {
+        if(route.name == 'ExoticBulk') {
             return exoticBulk;
         }
         return exotic;
@@ -69,7 +72,7 @@ export default function ExoticScreen({route, navigation}) {
                                         })}
                             </Picker>
                         </View>
-                        <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
+                        <Text style={ styles.minimumQty }>Minimum Quantity {product.minOrderQty}kgs</Text>
                     </View>
                     <Button 
                     mode="contained" 

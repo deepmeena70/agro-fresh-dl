@@ -7,7 +7,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {fruitSelector, fruitClear, fetchRegFruit} from '../../features/fruit';
 
 export default function FruitsScreen({route, navigation}) {
-    const [selectedValue, setSelectedValue] = useState(null)
+    const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
@@ -69,7 +69,9 @@ export default function FruitsScreen({route, navigation}) {
                                         })}
                                 </Picker>
                             </View>
-                            <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
+                            <Text style={ styles.minimumQty }>
+                                Minimum Quantity {product.minOrderQty}kgs
+                            </Text>
                         </View>
                         <Button 
                         mode="contained" 

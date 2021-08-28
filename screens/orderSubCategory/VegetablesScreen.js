@@ -22,7 +22,7 @@ export default function VegetablesScreen({route, navigation}) {
             dispatch(fetchRegVeg('bulk'))
     },[dispatch]);
 
-    const [selectedValue, setSelectedValue] = useState(null)
+    const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     function open() {
@@ -73,7 +73,7 @@ export default function VegetablesScreen({route, navigation}) {
                                         })}
                                     </Picker>
                                 </View>
-                                <Text style={ styles.minimumQty }>Minimum Quantity .5kgs</Text>
+                                <Text style={ styles.minimumQty }>Minimum Quantity {product.minOrderQty}kgs</Text>
                             </View>
                             <Button 
                             mode="contained" 
