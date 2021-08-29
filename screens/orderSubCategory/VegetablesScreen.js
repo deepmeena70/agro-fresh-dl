@@ -4,6 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
 import {fetchRegVeg, vegetableClear, vegetableSelector} from '../../features/vegetable';
+import {addToCart, cartSelector} from '../../features/cart';
 import {useSelector, useDispatch} from 'react-redux';
 
 export default function VegetablesScreen({route, navigation}) {
@@ -13,6 +14,9 @@ export default function VegetablesScreen({route, navigation}) {
     console.log('route from vegetable =>' , route.name);
 
     const {vegetable, vegetableBulk, loadVegetable, errorVegetable} = useSelector(vegetableSelector);
+
+    const {items} = useSelector(cartSelector);
+
 
     useEffect(() => {
         dispatch(vegetableClear())
@@ -38,6 +42,18 @@ export default function VegetablesScreen({route, navigation}) {
             return vegetableBulk;
         }
         return vegetable;
+    }
+
+    const handleBuy = (item) => {
+        console.log('item name =>',item.productName);
+        let itemFound = items.some(product=>{
+            return product.productName == item.productName;
+        })
+        if(itemFound) {
+            return console.log(`${item.productName} already exists!`)
+        }
+        dispatch(addToCart(item));
+        console.log(items);
     }
 
     return ( 
@@ -77,7 +93,7 @@ export default function VegetablesScreen({route, navigation}) {
                             </View>
                             <Button 
                             mode="contained" 
-                            onPress={() => console.log('Pressed')}
+                            onPress={() => {handleBuy(product)}}
                             color="#37c7ad"
                             labelStyle={{ color:"#fff" }}
                             >
