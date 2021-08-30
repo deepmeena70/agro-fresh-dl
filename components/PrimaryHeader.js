@@ -1,10 +1,20 @@
 import React from 'react';
-import {View, Text, StyleSheet, TextInput, SafeAreaView} from 'react-native';
+import {View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity} from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
+import { Badge } from 'react-native-paper';
+
+import {cartSelector} from '../features/cart'
+import {useSelector} from 'react-redux'
 
 export default function PrimaryHeader(props) {
 
     const {navigation} = props;
+
+    const {items} = useSelector(cartSelector);
+
+    const getItemsCount = () => {
+      return items.length;
+    }
 
     const action = () => {
         navigation.toggleDrawer();
@@ -37,13 +47,21 @@ export default function PrimaryHeader(props) {
                       size={22}
                       onPress={() => navigation.navigate('Notification')}
                   />
-                  <MaterialCommunityIcons 
-                      name="cart"
-                      color="#37c7ad"
-                      style={{ paddingLeft:20}}
-                      size={22}
-                      onPress={() => navigation.navigate('Cart')}
-                  />
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Cart')}
+                  >
+                    <MaterialCommunityIcons 
+                        name="cart"
+                        color="#37c7ad"
+                        style={{ paddingLeft:20}}
+                        size={22}
+                    />
+                    {getItemsCount() > 0 && 
+                        <Badge style={{ position:'absolute', top: -9, left:28 }}>
+                          {getItemsCount()}
+                        </Badge>
+                    }
+                  </TouchableOpacity>
                 </View>
             </View>
 

@@ -5,6 +5,7 @@ import userDataReducer from './features/userData'
 import vegetableReducer from './features/vegetable'
 import fruitReducer from './features/fruit'
 import exoticReducer from './features/exotic'
+import offersReducer from './features/offers'
 
 import cartReducer from './features/cart'
 
@@ -15,7 +16,8 @@ const store = configureStore({
     vegetable: vegetableReducer,
     fruit: fruitReducer,
     exotic: exoticReducer,
-    cart: cartReducer
+    cart: cartReducer,
+    offers: offersReducer,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({

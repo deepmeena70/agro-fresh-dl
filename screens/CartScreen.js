@@ -9,13 +9,13 @@ import {cartSelector, deleteFromCart, changeQty} from '../features/cart'
 import SecondaryHeader from '../components/SecondaryHeader'
 
 
-export default function CartScreen({navigation}) {
+export default function CartScreen({route, navigation}) {
+
     const dispatch = useDispatch();
     const {items} = useSelector(cartSelector);
 
     const [code, setCode] = useState('');
 
-    const [selectedValue, setSelectedValue] = useState();
     const pickerRef = useRef();
 
     const deleteItem = (name) => {
@@ -78,8 +78,27 @@ export default function CartScreen({navigation}) {
         return totalDiscount;
     }
 
+    const getOfferDiscount = () => {
+        let offerCodeDiscount;
+        try{
+            offerCodeDiscount = route.params.item.discount;
+        } catch(e){
+            console.log(e);
+            offerCodeDiscount = 0;
+        }
+
+        return offerCodeDiscount;
+    }
+
     const getGrandTotal = () => {
-        return getTotal('regular') + getTotal();
+      
+        const total =  [getTotal('regular') + getTotal()];
+
+        return total - total*getOfferDiscount()*0.01;
+    }
+
+    const getAllSaving = () => {
+        return getTotalDiscount('regular') + getTotalDiscount() + [getTotal('regular') + getTotal()]*getOfferDiscount()*0.01;
     }
 
     const getTotal = (orderType) => {
@@ -88,6 +107,20 @@ export default function CartScreen({navigation}) {
         }
         return getSubTotal('bulk') - getTotalDiscount('bulk');
     }
+
+    const getCode = () => {
+        if(route) {
+            try{
+                return route.params.item.offerCode;
+            } catch(e){
+                console.log(e);
+                return code;
+            }
+        }
+        return code;
+    }
+
+  
 
     return (
         <View style={styles.mainContainer}>
@@ -145,15 +178,22 @@ export default function CartScreen({navigation}) {
                 )
             }
 
+            {
+                items.length === 0 &&  
+                <View style={{ flex:1, alignItems: 'center',marginTop:12}}>
+                    <Text style={{ color:'grey', fontSize:20 }}>Your cart is empty!</Text>
+                </View>
+            }
+
             <View style={styles.offerContainer}>
                 <TextInput 
                     label="OFFER CODE"
-                    value={code}
+                    value={getCode()}
                     onChangeText={text => setCode(text)}
                     mode="outlined"
                     outlineColor="#37c7ad"
                 />
-                <Button icon="gift" mode="contained" onPress={() => console.log('Pressed')} labelStyle={{ color: "white" }}>
+                <Button icon="gift" mode="contained" onPress={() =>navigation.navigate('Offers') } labelStyle={{ color: "white" }}>
                     View Offers
                 </Button>
             </View>
@@ -239,6 +279,19 @@ export default function CartScreen({navigation}) {
                 
             }
 
+            {
+                getGrandTotal() > 0 && 
+                <View style={styles.grandTotal}>
+                    <View style={{ flex:1,alignItems:'flex-start' }}>
+                        <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>You Saved</Text>
+                    </View>
+                    <View style={{ flex:1,alignItems:'flex-end' }}>
+                        <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>
+                            ₹{getAllSaving().toFixed(2)}
+                        </Text>
+                    </View>
+                </View>
+            }
             {
                 getGrandTotal() > 0 && 
                 <View style={styles.grandTotal}>
