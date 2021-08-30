@@ -9,11 +9,28 @@ const cartSlice = createSlice({
     initialState,
     reducers: {
         add: (state, action) => {
+        let itemFound = state.items.some(product=>{
+            return product[0].productName === action.payload[0].productName;
+        })
+        if(itemFound) {
+            return console.log(`${action.payload[0].productName} already exists!`)
+        }
+
             state.items.push(action.payload);
         },
         remove:(state,action) => {
-            let index = state.items.findIndex(product => product.productName === action.payload);
+            let index = state.items.findIndex(product => product[0].productName === action.payload);
             state.items.splice(index, 1);
+        },
+        increment: (state, action) => {
+            let index = state.items.findIndex(product => product[0].productName === action.payload);
+            state.items[index][2]+=0.1;
+            console.log('item >>>',state.items[index][0].productName);
+        },
+        decrement: (state, action) => {
+            let index = state.items.findIndex(product => product[0].productName === action.payload);
+            state.items[index][2]-=0.1;
+            console.log('item >>>',state.items[index][0].productName);
         },
         clear: (state) => {
             Object.assign(state, initialState);
@@ -25,6 +42,8 @@ const cartSlice = createSlice({
 export const {
     add,
     remove,
+    increment,
+    decrement,
     clear
 } = cartSlice.actions;
 
@@ -32,15 +51,26 @@ export const cartSelector = state => state.cart;
 
 export default cartSlice.reducer;
 
-export function addToCart (items) {
+export function addToCart (items, selectedValue) {
     return (dispatch) => {
-        dispatch(add(items))
+        // arr of items, selected package and purchase quantity
+        const arr = [items, selectedValue, 1];
+        dispatch(add(arr));
     }
 }
 
 export function deleteFromCart (items) {
     return (dispatch) => {
         dispatch(remove(items));
+    }
+}
+
+export function changeQty (items, value) {
+    return (dispatch) => {
+        if(value) {
+            return dispatch(increment(items))
+        }
+        return dispatch(decrement(items))
     }
 }
 

@@ -46,13 +46,7 @@ export default function VegetablesScreen({route, navigation}) {
 
     const handleBuy = (item) => {
         console.log('item name =>',item.productName);
-        let itemFound = items.some(product=>{
-            return product.productName == item.productName;
-        })
-        if(itemFound) {
-            return console.log(`${item.productName} already exists!`)
-        }
-        dispatch(addToCart(item));
+        dispatch(addToCart(item, selectedValue));
         console.log(items);
     }
 
