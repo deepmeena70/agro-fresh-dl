@@ -1,166 +1,45 @@
-import React,{useState, useRef, useEffect} from 'react'
+import React from 'react'
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
-import { Button, IconButton, Colors, TextInput } from 'react-native-paper';
+import { Button, Card, Title, Paragraph} from 'react-native-paper';
 
-import {useSelector, useDispatch} from 'react-redux';
-import {cartSelector, deleteFromCart, changeQty} from '../features/cart';
-import {getCartDetails} from '../features/cartDetails';
+import {useSelector} from 'react-redux';
 
 import SecondaryHeader from '../components/SecondaryHeader'
-import {getDeliveryAddress, deliveryAddressSelector} from '../features/deliveryAddress'
 import { userSelector } from '../features/user';
+import {cartDetailsSelector} from '../features/cartDetails';
 
 
 export default function CartScreen({route, navigation}) {
 
-    const dispatch = useDispatch();
-    const {items} = useSelector(cartSelector);
     const {user} = useSelector(userSelector);
-    const {deliveryAddress} = useSelector(deliveryAddressSelector);
-
-    const [code, setCode] = useState('');
-
-    const pickerRef = useRef();
-
-
-    useEffect(() => {
-        dispatch(getDeliveryAddress(user))
-    },[dispatch, user]);
-
-    const deleteItem = (name) => {
-        dispatch(deleteFromCart(name))
-    }
-    
-    const handlePlus = (name) => {
-        console.log('plus=>', name);
-        dispatch(changeQty(name, true));
-    }
-
-    const handleMinus = (name) => {
-        console.log('minus=>', name);
-        dispatch(changeQty(name, false));
-    }
-
-    const getSubTotal = (orderType) => {
-        let total = 0;
-        
-        if(orderType === 'regular') {
-            items.map(product => {
-                if(product[0].regular){
-                    total += Number(product[0].sellingPrice);
-                    total = product[2]*total; 
-                }
-            })
-        } else {
-            items.map(product => {
-                if(product[0].bulk){
-                    total += Number(product[0].sellingPrice);
-                    total = product[2]*total;  
-                }
-            })
-        }
-
-        return total;
-    }
-
-    const getTotalDiscount = (orderType) => {
-        let totalDiscount = 0;
-       
-        if(orderType === 'regular') {
-            items.map(product => {
-                if(product[0].regular) {
-                    totalDiscount += Number(product[0].discountPrice); 
-                    totalDiscount = product[2]*totalDiscount; 
-                }
-            })
-            totalDiscount = getSubTotal('regular')-totalDiscount;
-        } else {
-            items.map(product => {
-                if(product[0].bulk) {
-                    totalDiscount += Number(product[0].discountPrice);
-                    totalDiscount = product[2]*totalDiscount; 
-                }
-            })
-            totalDiscount = getSubTotal('bulk')-totalDiscount;
-        }
-
-        return totalDiscount;
-    }
-
-    const getOfferDiscount = () => {
-        let offerCodeDiscount;
-        try{
-            offerCodeDiscount = route.params.item.discount;
-        } catch(e){
-            console.log(e);
-            offerCodeDiscount = 0;
-        }
-
-        return offerCodeDiscount;
-    }
-
-    const getGrandTotal = () => {
-      
-        const total =  [getTotal('regular') + getTotal()];
-
-        return total - total*getOfferDiscount()*0.01;
-    }
-
-    const getAllSaving = () => {
-        return getTotalDiscount('regular') + getTotalDiscount() + [getTotal('regular') + getTotal()]*getOfferDiscount()*0.01;
-    }
-
-    const getTotal = (orderType) => {
-        if(orderType === 'regular') {
-            return getSubTotal('regular') - getTotalDiscount('regular');
-        }
-        return getSubTotal('bulk') - getTotalDiscount('bulk');
-    }
-
-    const getCode = () => {
-        if(route) {
-            try{
-                return route.params.item.offerCode;
-            } catch(e){
-                console.log(e);
-                return code;
-            }
-        }
-        return code;
-    }
+    const {cartDetails} = useSelector(cartDetailsSelector);
 
     const handleProceed = () => {
-        const details = {
-            'items': items,
-            'subTotalRegular': getSubTotal('regular'),
-            'totalDiscountRegular': getTotalDiscount('regular'),
-            'totalRegular': getTotal('regular'),
-            'subTotalBulk': getSubTotal(),
-            'totalDiscountBulk': getTotalDiscount(),
-            'offerCode': getCode(),
-            'totalBulk': getTotal(),
-            'offerDiscount': getOfferDiscount(),
-            'grandTotal' : getGrandTotal(),
-            'allSaving' : getAllSaving(),
-            'deliveryAddress': deliveryAddress
-        }
-
-        dispatch(getCartDetails(details));
-
-        if(deliveryAddress !== null) {
-            return navigation.navigate('OrderSummary')
-        }
-        return navigation.navigate('AddDeliveryAddress')
+        navigation.navigate('PaymentOptions')
     }
-
-  
 
     return (
         <View style={styles.mainContainer}>
-            <SecondaryHeader navigation={navigation} screenName="Cart" />
+            <SecondaryHeader navigation={navigation} screenName="Order Summary" />
             <ScrollView style={styles.container}>
+            <Card style={{ width:`${98}%` }}>
+                <Card.Content>
+                    <Title>Delivery Address</Title>
+                    <Paragraph>{cartDetails.deliveryAddress.name}</Paragraph>
+                    <Paragraph>
+                        {cartDetails.deliveryAddress.houseNumber}
+                        ,{cartDetails.deliveryAddress.area}
+                        ,{cartDetails.deliveryAddress.landmark},
+                        ,{cartDetails.deliveryAddress.selectedCity}
+                        ,{cartDetails.deliveryAddress.selectedState}
+                        ,{cartDetails.deliveryAddress.pincode}
+                    </Paragraph>
+                    <Paragraph>{cartDetails.deliveryAddress.mobileNumber}</Paragraph>
+                </Card.Content>
+            </Card>
+
                 {
-                items.map((product, key) => 
+                cartDetails.items.map((product, key) => 
                     
                     <View style={styles.card} key={key}>
                         <View style={styles.productContainer}>
@@ -178,32 +57,6 @@ export default function CartScreen({route, navigation}) {
                                     <Text style={{ color:'grey' }}> 
                                     {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
                                 </View>
-                                <Text style={ styles.minimumQty }>Minimum Quantity {product[0].minOrderQty}kgs</Text>
-                            </View>
-                            <View>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-                                    <IconButton
-                                        icon="minus-circle"
-                                        color={Colors.red500}
-                                        size={20}
-                                        onPress={() => handleMinus(product[0].productName)}
-                                    />
-                                    <Text>{product[2].toFixed(1)}</Text>
-                                    <IconButton
-                                        icon="plus-circle"
-                                        color="#37c7ad"
-                                        size={20}
-                                        onPress={() => handlePlus(product[0].productName)}
-                                    />
-                                </View>
-                                <View style={{ flex:1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
-                                    <IconButton
-                                    icon="delete"
-                                    color={Colors.red500}
-                                    size={20}
-                                    onPress={() => deleteItem(product[0].productName)}
-                                    />
-                                </View>
                             </View>
                         </View>
                     </View>
@@ -212,27 +65,7 @@ export default function CartScreen({route, navigation}) {
             }
 
             {
-                items.length === 0 &&  
-                <View style={{ flex:1, alignItems: 'center',marginTop:12}}>
-                    <Text style={{ color:'grey', fontSize:20 }}>Your cart is empty!</Text>
-                </View>
-            }
-
-            <View style={styles.offerContainer}>
-                <TextInput 
-                    label="OFFER CODE"
-                    value={getCode()}
-                    onChangeText={text => setCode(text)}
-                    mode="outlined"
-                    outlineColor="#37c7ad"
-                />
-                <Button icon="gift" mode="contained" onPress={() =>navigation.navigate('Offers') } labelStyle={{ color: "white" }}>
-                    View Offers
-                </Button>
-            </View>
-
-            {
-                getSubTotal('regular') > 0 && 
+                cartDetails.subTotalRegular > 0 && 
 
                 <View style={styles.cartDetails}>
                     <View style={styles.cartDetailsRow}>
@@ -248,7 +81,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ color:'red',fontSize:15 }}>₹{getTotalDiscount('regular').toFixed(2)}</Text>
+                            <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountRegular.toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={styles.cartDetailsRow}>
@@ -256,7 +89,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:15 }}>Subtotal</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>₹{getSubTotal('regular').toFixed(2)}</Text>
+                            <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalRegular.toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={styles.cartDetailsRow}>
@@ -264,7 +97,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:18 }}>Total</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:18 }}>₹{getTotal('regular').toFixed(2)}</Text>
+                            <Text style={{ fontSize:18 }}>₹{cartDetails.totalRegular.toFixed(2)}</Text>
                         </View>
                     </View>
                 </View>
@@ -273,7 +106,7 @@ export default function CartScreen({route, navigation}) {
 
     
             {
-                getSubTotal() > 0 &&
+                cartDetails.subTotalBulk > 0 &&
 
                 <View style={styles.cartDetails}>
                     <View style={styles.cartDetailsRow}>
@@ -289,7 +122,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ color:'red',fontSize:15 }}>₹{getTotalDiscount().toFixed(2)}</Text>
+                            <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountBulk.toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={styles.cartDetailsRow}>
@@ -297,7 +130,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:15 }}>Subtotal</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>₹{getSubTotal().toFixed(2)}</Text>
+                            <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalBulk.toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={styles.cartDetailsRow}>
@@ -305,7 +138,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:18 }}>Total</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:18 }}>₹{getTotal().toFixed(2)}</Text>
+                            <Text style={{ fontSize:18 }}>₹{cartDetails.totalBulk.toFixed(2)}</Text>
                         </View>
                     </View>
                 </View> 
@@ -313,27 +146,27 @@ export default function CartScreen({route, navigation}) {
             }
 
             {
-                getGrandTotal() > 0 && 
+                cartDetails.grandTotal > 0 && 
                 <View style={styles.grandTotal}>
                     <View style={{ flex:1,alignItems:'flex-start' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>You Saved</Text>
                     </View>
                     <View style={{ flex:1,alignItems:'flex-end' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>
-                            ₹{getAllSaving().toFixed(2)}
+                            ₹{cartDetails.allSaving.toFixed(2)}
                         </Text>
                     </View>
                 </View>
             }
             {
-                getGrandTotal() > 0 && 
+                cartDetails.grandTotal > 0 && 
                 <View style={styles.grandTotal}>
                     <View style={{ flex:1,alignItems:'flex-start' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
                     </View>
                     <View style={{ flex:1,alignItems:'flex-end' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16 }}>
-                            ₹{getGrandTotal().toFixed(2)}
+                            ₹{cartDetails.grandTotal.toFixed(2)}
                         </Text>
                     </View>
                 </View>
@@ -344,7 +177,7 @@ export default function CartScreen({route, navigation}) {
         
             </ScrollView>
             <View>
-                <Button mode="contained" onPress={() => handleProceed()} labelStyle={{ color:"white" }}>Proceed to Pay</Button>
+                <Button mode="contained" onPress={() => handleProceed()} labelStyle={{ color:"white" }}>Proceed for ₹{cartDetails.grandTotal}</Button>
             </View>
         </View>
 
@@ -442,4 +275,5 @@ const styles = StyleSheet.create({
         padding:8
     }
 })
+
 

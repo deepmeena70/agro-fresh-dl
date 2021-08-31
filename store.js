@@ -8,6 +8,8 @@ import exoticReducer from './features/exotic'
 import offersReducer from './features/offers'
 
 import cartReducer from './features/cart'
+import cartDetailsReducer from './features/cartDetails'
+import deliveryAddressReducer from './features/deliveryAddress'
 
 const store = configureStore({
   reducer: {
@@ -18,6 +20,8 @@ const store = configureStore({
     exotic: exoticReducer,
     cart: cartReducer,
     offers: offersReducer,
+    cartDetails: cartDetailsReducer,
+    deliveryAddress: deliveryAddressReducer,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
