@@ -162,18 +162,29 @@ export default function CartScreen({route, navigation}) {
                 cartDetails.grandTotal > 0 && 
                 <View style={styles.grandTotal}>
                     <View style={{ flex:1,alignItems:'flex-start' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
+                        <Text style={{ fontSize:16 }}>Delivery Charge</Text>
                     </View>
                     <View style={{ flex:1,alignItems:'flex-end' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>
-                            ₹{cartDetails.grandTotal.toFixed(2)}
+                        <Text style={{ fontSize:16, color:'black' }}>
+                            {typeof cartDetails.deliveryCharge === 'string' && cartDetails.deliveryCharge}
+                            {typeof cartDetails.deliveryCharge === 'number' && `₹${cartDetails.deliveryCharge}`}
                         </Text>
                     </View>
                 </View>
             }
-            
-        
-
+            {
+                cartDetails.grandTotal > 0 && 
+                <View style={styles.grandTotal}>
+                    <View style={{ flex:1,alignItems:'flex-start' }}>
+                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
+                    </View>
+                    <View style={{ flex:1,alignItems:'flex-end' }}>
+                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>
+                            ₹{cartDetails.grandTotal}
+                        </Text>
+                    </View>
+                </View>
+            }
         
             </ScrollView>
             <View>

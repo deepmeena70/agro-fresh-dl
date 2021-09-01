@@ -25,6 +25,7 @@ import AddDeliveryAddress from '../screens/AddDeliveryAddress'
 import OrderSummary from '../screens/OrderSummary';
 import PaymentOptions from '../screens/PaymentOptions'
 import UpiOptions from '../screens/UpiOptions'
+import CardOptions from '../screens/CardOptions'
 
 // components
 import Loading from '../components/Loading'
@@ -83,6 +84,7 @@ export default function DrawerNavigation() {
                     <Drawer.Screen name="Location" component={LocationScreen} />
                     <Drawer.Screen name="PaymentOptions" component={PaymentOptions} />
                     <Drawer.Screen name="UpiOptions" component={UpiOptions} />
+                    <Drawer.Screen name="CardOptions" component={CardOptions} />
                 </>
             :
                 <>

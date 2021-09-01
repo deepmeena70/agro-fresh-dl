@@ -12,7 +12,13 @@ export default function PaymentOptions({navigation}) {
 
     const handleContinue = () => {
         console.log("continue")
-        navigation.navigate('UpiOptions')
+        switch(checked){
+            case 'upi':
+                navigation.navigate('UpiOptions');
+                break;
+            case 'card':
+                navigation.navigate('CardOptions'); 
+        }
     }
 
     return (

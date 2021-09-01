@@ -101,9 +101,13 @@ export default function CartScreen({route, navigation}) {
 
     const getGrandTotal = () => {
       
-        const total =  [getTotal('regular') + getTotal()];
+        const total =  getTotal('regular') + getTotal();
 
-        return total - total*getOfferDiscount()*0.01;
+        const deliveryCharge = (typeof getDeliveryCharge() === 'string') ? 0 : getDeliveryCharge();
+
+        const grandTotoal = (total - total*getOfferDiscount()*0.01) + deliveryCharge;
+
+        return grandTotoal.toFixed(2);
     }
 
     const getAllSaving = () => {
@@ -115,6 +119,18 @@ export default function CartScreen({route, navigation}) {
             return getSubTotal('regular') - getTotalDiscount('regular');
         }
         return getSubTotal('bulk') - getTotalDiscount('bulk');
+    }
+
+    const getDeliveryCharge = () => {
+        const total = getTotal('regular') + getTotal();
+        if(total === 0) {
+            return 0;
+        }
+
+        if(total > 200) {
+            return 'Free'
+        }
+        return 100;
     }
 
     const getCode = () => {
@@ -140,6 +156,7 @@ export default function CartScreen({route, navigation}) {
             'offerCode': getCode(),
             'totalBulk': getTotal(),
             'offerDiscount': getOfferDiscount(),
+            'deliveryCharge': getDeliveryCharge(),
             'grandTotal' : getGrandTotal(),
             'allSaving' : getAllSaving(),
             'deliveryAddress': deliveryAddress
@@ -329,11 +346,25 @@ export default function CartScreen({route, navigation}) {
                 getGrandTotal() > 0 && 
                 <View style={styles.grandTotal}>
                     <View style={{ flex:1,alignItems:'flex-start' }}>
+                        <Text style={{ fontSize:16 }}>Delivery Charge</Text>
+                    </View>
+                    <View style={{ flex:1,alignItems:'flex-end' }}>
+                        <Text style={{ fontSize:16, color:'black' }}>
+                            {typeof getDeliveryCharge() === 'string' && getDeliveryCharge()}
+                            {typeof getDeliveryCharge() === 'number' && `₹${getDeliveryCharge()}`}
+                        </Text>
+                    </View>
+                </View>
+            }
+            {
+                getGrandTotal() > 0 && 
+                <View style={styles.grandTotal}>
+                    <View style={{ flex:1,alignItems:'flex-start' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
                     </View>
                     <View style={{ flex:1,alignItems:'flex-end' }}>
                         <Text style={{ fontWeight: 'bold', fontSize:16 }}>
-                            ₹{getGrandTotal().toFixed(2)}
+                            ₹{getGrandTotal()}
                         </Text>
                     </View>
                 </View>
@@ -437,9 +468,8 @@ const styles = StyleSheet.create({
     },
     grandTotal:{
         width: `${98}%`,
-        flex:1,
         flexDirection:'row',
-        padding:8
+        padding:8,
     }
 })
 
