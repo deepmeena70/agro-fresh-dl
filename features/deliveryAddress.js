@@ -41,3 +41,9 @@ export function getDeliveryAddress (user) {
     }
 }
 
+export function clearDeliveryAddress() {
+    return (dispatch) => {
+        dispatch(clear());
+    }
+}
+

@@ -15,7 +15,7 @@ import {
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSelector, useDispatch} from 'react-redux'
 import { userSelector, clearUser } from '../features/user'
-import {userDataSelector, fetchUserData} from '../features/userData'
+import {userDataSelector, clearUserData} from '../features/userData'
 
 
 export default function DrawerContent(props) {
@@ -26,16 +26,15 @@ export default function DrawerContent(props) {
   const {user, signIn} = useSelector(userSelector)
   const {userData, userDataLoading, hasUserDataErrors} = useSelector(userDataSelector)
   const {navigation} = props;
-  
 
   const userName = () => {
-      const nameArray = String(userData.name).split('');
+      const nameArray = String(userData.displayName).split('');
       return nameArray[0];
   }
 
-
   const onLogout = () => {
     dispatch(clearUser());
+    dispatch(clearUserData());
     navigation.navigate('Home')
   }
 
@@ -54,7 +53,7 @@ export default function DrawerContent(props) {
             color='#fff'
           />
           <Title style={styles.title}>
-            {userData ? userData.name : 'Guest' }
+            {userData ? userData.displayName : 'Guest' }
           </Title>
         </View> 
         

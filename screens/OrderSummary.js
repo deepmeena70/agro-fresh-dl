@@ -18,173 +18,177 @@ export default function CartScreen({route, navigation}) {
         navigation.navigate('PaymentOptions')
     }
 
+    if(cartDetails === null) {
+        return <Text>Loading...</Text>
+    }
+
     return (
         <View style={styles.mainContainer}>
             <SecondaryHeader navigation={navigation} screenName="Order Summary" />
             <ScrollView style={styles.container}>
-            <Card style={{ width:`${98}%` }}>
-                <Card.Content>
-                    <Title>Delivery Address</Title>
-                    <Paragraph>{cartDetails.deliveryAddress.name}</Paragraph>
-                    <Paragraph>
-                        {cartDetails.deliveryAddress.houseNumber}
-                        ,{cartDetails.deliveryAddress.area}
-                        ,{cartDetails.deliveryAddress.landmark},
-                        ,{cartDetails.deliveryAddress.selectedCity}
-                        ,{cartDetails.deliveryAddress.selectedState}
-                        ,{cartDetails.deliveryAddress.pincode}
-                    </Paragraph>
-                    <Paragraph>{cartDetails.deliveryAddress.mobileNumber}</Paragraph>
-                </Card.Content>
-            </Card>
+                <Card style={{ width:`${98}%` }}>
+                    <Card.Content>
+                        <Title>Delivery Address</Title>
+                        <Paragraph>{cartDetails.user}</Paragraph>
+                        <Paragraph>
+                            {cartDetails.deliveryAddress.houseNumber}
+                            ,{cartDetails.deliveryAddress.area}
+                            ,{cartDetails.deliveryAddress.landmark},
+                            ,{cartDetails.deliveryAddress.selectedCity}
+                            ,{cartDetails.deliveryAddress.selectedState}
+                            ,{cartDetails.deliveryAddress.pincode}
+                        </Paragraph>
+                        <Paragraph>{cartDetails.phone}</Paragraph>
+                    </Card.Content>
+                </Card>
 
-                {
-                cartDetails.items.map((product, key) => 
-                    
-                    <View style={styles.card} key={key}>
-                        <View style={styles.productContainer}>
-                            <Image 
-                                source={{ uri:product[0].imageURL }}
-                                style={ styles.thumbnail }
-                            />
-                            <View style={styles.productDescription}>
-                                <Text style={ styles.prodTitle }>{product[0].productName}</Text>
-                                <View style={ styles.priceContainer }>
-                                    <Text style={ styles.rate }>₹ {product[0].sellingPrice}/kg</Text>
-                                    <Text style = { styles.discountRate }>₹ {product[0].discountPrice}/kg</Text>
-                                </View>
-                                <View style={ styles.pickerContainer }>
-                                    <Text style={{ color:'grey' }}> 
-                                    {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                    {
+                    cartDetails.items.map((product, key) => 
+                        
+                        <View style={styles.card} key={key}>
+                            <View style={styles.productContainer}>
+                                <Image 
+                                    source={{ uri:product[0].imageURL }}
+                                    style={ styles.thumbnail }
+                                />
+                                <View style={styles.productDescription}>
+                                    <Text style={ styles.prodTitle }>{product[0].productName}</Text>
+                                    <View style={ styles.priceContainer }>
+                                        <Text style={ styles.rate }>₹ {product[0].sellingPrice}/kg</Text>
+                                        <Text style = { styles.discountRate }>₹ {product[0].discountPrice}/kg</Text>
+                                    </View>
+                                    <View style={ styles.pickerContainer }>
+                                        <Text style={{ color:'grey' }}> 
+                                        {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                    </View>
 
-                )
-            }
+                    )
+                }
 
-            {
-                cartDetails.subTotalRegular > 0 && 
+                {
+                    cartDetails.subTotalRegular > 0 && 
 
-                <View style={styles.cartDetails}>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:15 }}>Category</Text>
+                    <View style={styles.cartDetails}>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:15 }}>Category</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:15 }}>Regular Order</Text>
+                            </View>
                         </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>Regular Order</Text>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountRegular.toFixed(2)}</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:15 }}>Subtotal</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalRegular.toFixed(2)}</Text>
+                            </View>
                         </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountRegular.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:15 }}>Subtotal</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalRegular.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:18 }}>Total</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:18 }}>₹{cartDetails.totalRegular.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                </View>
-            
-            }
-
-    
-            {
-                cartDetails.subTotalBulk > 0 &&
-
-                <View style={styles.cartDetails}>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:15 }}>Category</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>Bulk Order</Text>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:18 }}>Total</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:18 }}>₹{cartDetails.totalRegular.toFixed(2)}</Text>
+                            </View>
                         </View>
                     </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountBulk.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:15 }}>Subtotal</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalBulk.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.cartDetailsRow}>
-                        <View style={{flex:1, alignItems:'flex-start' }}>
-                            <Text style={{ fontSize:18 }}>Total</Text>
-                        </View>
-                        <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:18 }}>₹{cartDetails.totalBulk.toFixed(2)}</Text>
-                        </View>
-                    </View>
-                </View> 
                 
-            }
+                }
 
-            {
-                cartDetails.grandTotal > 0 && 
-                <View style={styles.grandTotal}>
-                    <View style={{ flex:1,alignItems:'flex-start' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>You Saved</Text>
+        
+                {
+                    cartDetails.subTotalBulk > 0 &&
+
+                    <View style={styles.cartDetails}>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:15 }}>Category</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:15 }}>Bulk Order</Text>
+                            </View>
+                        </View>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ color:'red',fontSize:15 }}>Discount</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ color:'red',fontSize:15 }}>₹{cartDetails.totalDiscountBulk.toFixed(2)}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:15 }}>Subtotal</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:15 }}>₹{cartDetails.subTotalBulk.toFixed(2)}</Text>
+                            </View>
+                        </View>
+                        <View style={styles.cartDetailsRow}>
+                            <View style={{flex:1, alignItems:'flex-start' }}>
+                                <Text style={{ fontSize:18 }}>Total</Text>
+                            </View>
+                            <View style={{flex:1, alignItems:'flex-end'}}>
+                                <Text style={{ fontSize:18 }}>₹{cartDetails.totalBulk.toFixed(2)}</Text>
+                            </View>
+                        </View>
+                    </View> 
+                    
+                }
+
+                {
+                    cartDetails.grandTotal > 0 && 
+                    <View style={styles.grandTotal}>
+                        <View style={{ flex:1,alignItems:'flex-start' }}>
+                            <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>You Saved</Text>
+                        </View>
+                        <View style={{ flex:1,alignItems:'flex-end' }}>
+                            <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>
+                                ₹{cartDetails.allSaving.toFixed(2)}
+                            </Text>
+                        </View>
                     </View>
-                    <View style={{ flex:1,alignItems:'flex-end' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16, color:'#37c7ad' }}>
-                            ₹{cartDetails.allSaving.toFixed(2)}
-                        </Text>
+                }
+                {
+                    cartDetails.grandTotal > 0 && 
+                    <View style={styles.grandTotal}>
+                        <View style={{ flex:1,alignItems:'flex-start' }}>
+                            <Text style={{ fontSize:16 }}>Delivery Charge</Text>
+                        </View>
+                        <View style={{ flex:1,alignItems:'flex-end' }}>
+                            <Text style={{ fontSize:16, color:'black' }}>
+                                {typeof cartDetails.deliveryCharge === 'string' && cartDetails.deliveryCharge}
+                                {typeof cartDetails.deliveryCharge === 'number' && `₹${cartDetails.deliveryCharge}`}
+                            </Text>
+                        </View>
                     </View>
-                </View>
-            }
-            {
-                cartDetails.grandTotal > 0 && 
-                <View style={styles.grandTotal}>
-                    <View style={{ flex:1,alignItems:'flex-start' }}>
-                        <Text style={{ fontSize:16 }}>Delivery Charge</Text>
+                }
+                {
+                    cartDetails.grandTotal > 0 && 
+                    <View style={styles.grandTotal}>
+                        <View style={{ flex:1,alignItems:'flex-start' }}>
+                            <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
+                        </View>
+                        <View style={{ flex:1,alignItems:'flex-end' }}>
+                            <Text style={{ fontWeight: 'bold', fontSize:16 }}>
+                                ₹{cartDetails.grandTotal}
+                            </Text>
+                        </View>
                     </View>
-                    <View style={{ flex:1,alignItems:'flex-end' }}>
-                        <Text style={{ fontSize:16, color:'black' }}>
-                            {typeof cartDetails.deliveryCharge === 'string' && cartDetails.deliveryCharge}
-                            {typeof cartDetails.deliveryCharge === 'number' && `₹${cartDetails.deliveryCharge}`}
-                        </Text>
-                    </View>
-                </View>
-            }
-            {
-                cartDetails.grandTotal > 0 && 
-                <View style={styles.grandTotal}>
-                    <View style={{ flex:1,alignItems:'flex-start' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>Grand Total</Text>
-                    </View>
-                    <View style={{ flex:1,alignItems:'flex-end' }}>
-                        <Text style={{ fontWeight: 'bold', fontSize:16 }}>
-                            ₹{cartDetails.grandTotal}
-                        </Text>
-                    </View>
-                </View>
-            }
+                }
         
             </ScrollView>
             <View>

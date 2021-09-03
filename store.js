@@ -10,6 +10,7 @@ import offersReducer from './features/offers'
 import cartReducer from './features/cart'
 import cartDetailsReducer from './features/cartDetails'
 import deliveryAddressReducer from './features/deliveryAddress'
+import locationReducer from './features/location'
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     offers: offersReducer,
     cartDetails: cartDetailsReducer,
     deliveryAddress: deliveryAddressReducer,
+    location: locationReducer,
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({

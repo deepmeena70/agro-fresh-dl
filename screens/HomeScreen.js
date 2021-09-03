@@ -1,16 +1,19 @@
 import React, {useEffect} from 'react'
 import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
-import {useDispatch, useSelector} from 'react-redux'
-import {signingIn, fetchUser, userSelector} from '../features/user'
+import {useSelector, useDispatch} from 'react-redux'
+import {userSelector} from '../features/user'
 
 // components
 import PrimaryHeader from '../components/PrimaryHeader'
+import firebase from '../firebase'
 
 
 export default function HomeScreen({ navigation }) {
 
-    const dispatch = useDispatch()
-    const {user,loading, hasErrors, signIn} = useSelector(userSelector)
+    const {user, loading, hasErrors, signIn} = useSelector(userSelector)
+
+
+    console.log('current user from home >>>',user);
 
     return (
         <View style={styles.container}>

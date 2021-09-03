@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
 
 export const initialState = {
     user: null,
@@ -12,24 +11,21 @@ const userSlice = createSlice({
     name: 'user',
     initialState,
     reducers: {
-        setSignIn(state){
+        signIn(state){
             state.signIn = true;
         },
-        setSignOut(state){
-            state.signIn = false;
-        },
-        setLoading(state){
+        loading(state){
             state.userLoading = true;
         },
-        setUser(state, action) {
+        getUser(state, action) {
             state.userLoading = false;
             state.user = action.payload;
         },
-        setUserFailed(state) {
+        failure(state) {
             state.userLoading = false;
             state.hasErrors = true;
         },
-        setUserToInitial(state) {
+        clear(state) {
             Object.assign(state, initialState);
         }
 
@@ -37,56 +33,31 @@ const userSlice = createSlice({
 })
 
 export const {
-    setSignIn, 
-    setSignOut, 
-    setLoading, 
-    setUser, 
-    setUserFailed,
-    setUserToInitial
+    signIn,
+    loading, 
+    getUser, 
+    failure,
+    clear
 } = userSlice.actions;
 
 export const userSelector = state => state.user;
 
 export default userSlice.reducer;
 
-export function signingIn(){
-    return async (dispatch)  => {
-        firebase.auth().onAuthStateChanged((user)=> {
-            if(user){
-                dispatch(setSignIn())
-            } else {
-                console.log("User not signed In")
-            }
-        })
-    }
-}
-
-export function fetchUser(){
-    return async (dispatch) => {
-        dispatch(setLoading())
-
-        try{
-            firebase
-            .auth()
-            .onAuthStateChanged((user) => {
-                (!user) ? (console.log('user is signed Out'))
-                : dispatch(setUser(user.uid));
-            })
-        } catch (error) {
-            dispatch(setUserFailed(error));
+export function gettingUser(user){
+    return (dispatch) => {
+        dispatch(loading())
+        if(!user) {
+            return;
         }
+        dispatch(signIn())
+        dispatch(getUser(user));     
     }
 }
 
 export function clearUser() {
-    return async (dispatch) => {
-        firebase
-            .auth()
-            .signOut()
-            .then(() => {
-                dispatch(setUserToInitial())
-            })
-        
+    return (dispatch) => {
+        dispatch(clear());        
     }
 }
 

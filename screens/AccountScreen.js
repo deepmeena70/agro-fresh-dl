@@ -1,43 +1,45 @@
-import React from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
+import React, {useEffect} from 'react'
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native'
 import { Avatar } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import {useDispatch, useSelector} from 'react-redux'
-import {fetchUser,clearUser, userSelector} from '../features/user'
-import {userDataSelector, fetchUserData} from '../features/userData'
+import {userSelector} from '../features/user'
+import {getDeliveryAddress, deliveryAddressSelector, clearDeliveryAddress} from '../features/deliveryAddress';
+import {userDataSelector} from '../features/userData'
+import SecondaryHeader from '../components/SecondaryHeader'
 
 export default function AccountScreen({navigation}) {
+    const dispatch = useDispatch();
+    
     const {user,loading, hasErrors, signIn} = useSelector(userSelector)
     const {userData, userDataLoading, hasUserDataErrors} = useSelector(userDataSelector)
+    const {deliveryAddress} = useSelector(deliveryAddressSelector);
+
+    useEffect(() => {
+        dispatch(clearDeliveryAddress());
+        dispatch(getDeliveryAddress(user.uid))
+    }, [dispatch]);
 
     const userName = () => {
-        const nameArray = String(userData.name).split('');
+        const nameArray = String(userData.displayName).split('');
         return nameArray[0];
     }
 
-
     return (
         <View style={styles.mainContainer}>
+            <SecondaryHeader navigation={navigation} screenName="Account"/>
             <View style={styles.container1}>
-                <View style={{ flex:1, flexDirection: 'row'}}>
-                    <MaterialCommunityIcons 
-                        name="menu"
-                        size={28}
-                        color="#fff"
-                        style={{ marginLeft:12 }}
-                        onPress={()=> navigation.toggleDrawer()}
-                    />
-                    <Text style={{ color:"#fff", paddingLeft:12, paddingTop: 2, fontSize:18 }}>My Account</Text>
-                </View>
                 <View style={{ flex:3, alignItems: 'center'}}>
                     <Avatar.Text 
                         size={80}
                         label={userName()}
-                        color="#37c7ad"
+                        color="#37c4ad"
                         style={{ backgroundColor:"#fff",marginTop:0 }}
                     />
-                    <Text style={styles.container1Text}>{userData?userData.name:''}</Text>
-                    <View style={styles.container1Row}>
+                    <Text style={styles.container1Text}>{userData?userData.displayName:''}</Text>
+                    <Pressable style={styles.container1Row}
+                        onPress={() => navigation.navigate('EditProfile')}
+                    >
                         <Text style={styles.container1RowText}>Edit</Text>
                         <MaterialCommunityIcons 
                             name="pencil"
@@ -45,7 +47,7 @@ export default function AccountScreen({navigation}) {
                             color="#fff"
                             style={{ marginLeft:3 }}
                         />
-                    </View>
+                    </Pressable>
                 </View>
             </View>
             <View style={styles.container2}>
@@ -55,7 +57,7 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>{userData?userData.name:''}</Text>
+                    <Text style={styles.rowText}>{userData?userData.displayName:''}</Text>
                 </View>
                 <View style={styles.row}>
                     <MaterialCommunityIcons 
@@ -74,13 +76,21 @@ export default function AccountScreen({navigation}) {
                     <Text style={styles.rowText}>{userData?userData.email:''}</Text>
                 </View>
                 <View style={styles.row}>
-                    <MaterialCommunityIcons 
-                        name="lock"
-                        size={28}
-                        color="grey"
-                    />
-                    <Text style={styles.rowText}>*********</Text>
-                    
+                    <View style={{ flex:.1 }}>
+                        <MaterialCommunityIcons 
+                            name="lock"
+                            size={28}
+                            color="grey"
+                        />
+                    </View>
+                    <View style={{ flex:.3 }}>
+                        <Text style={styles.rowText}>********</Text>
+                    </View>
+                    <View style={{ flex:.7 }}>
+                        <Pressable onPress={() => navigation.navigate('ChangePassword')}>
+                            <Text style={{ color:"#37C7AD" }}>Change Password</Text>
+                        </Pressable>
+                    </View>
                 </View>
                 <View style={styles.rowAddress}>
                     <MaterialCommunityIcons 
@@ -88,15 +98,18 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>123, Block, Kota, Rajasthan - 324002 </Text>
-                    <Text style={{ color:"#37c7ad", marginLeft:6, paddingTop:4, flexGrow:4 }}>Change Primary</Text>
+                    {deliveryAddress && 
+                        <Text style={styles.rowText}>
+                            {deliveryAddress.houseNumber}, 
+                            {" "+deliveryAddress.area}, 
+                            {" "+deliveryAddress.landmark}, 
+                            {" "+deliveryAddress.selectedCity}, 
+                            {" "+deliveryAddress.selectedState}, 
+                            {" "+deliveryAddress.pincode}
+                        </Text>
+                    }
                 </View>
             </View>
-            <Button 
-                    onPress={() => {}}
-                    title="Add More Address"
-                    color="#37c7ad"
-                />
         </View>
     )
 }

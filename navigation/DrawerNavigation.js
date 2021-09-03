@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {useDispatch, useSelector} from 'react-redux'
-import {fetchUser,clearUser, userSelector} from '../features/user'
-import {userDataSelector, fetchUserData} from '../features/userData'
+import {gettingUser, clearUser, userSelector} from '../features/user'
+import {userDataSelector, fetchUserData, clearUserData} from '../features/userData'
 
 // component
 import DrawerContent from '../components/DrawerContent'
@@ -26,11 +26,13 @@ import OrderSummary from '../screens/OrderSummary';
 import PaymentOptions from '../screens/PaymentOptions'
 import UpiOptions from '../screens/UpiOptions'
 import CardOptions from '../screens/CardOptions'
+import EditProfileScreen from '../screens/EditProfileScreen'
+import ChangePassword from '../screens/auth/ChangePassword';
+import LoginWithPhone from '../screens/auth/loginWithPhone';
 
 // components
 import Loading from '../components/Loading'
 import Errors from '../components/Errors'
-
 
 const Drawer = createDrawerNavigator();
 
@@ -39,19 +41,15 @@ export default function DrawerNavigation() {
     const dispatch = useDispatch()
     const {user,loading, hasErrors, signIn} = useSelector(userSelector)
     const {userData, userDataLoading, hasUserDataErrors} = useSelector(userDataSelector)
- 
-    useEffect(() => {
-        dispatch(fetchUser())
-        dispatch(fetchUserData(user))
-    } , [dispatch, user])
-    
 
+    useEffect(() => {
+        dispatch(clearUserData());
+        dispatch(fetchUserData(user))
+      }, [dispatch, user]);
     
     console.log('user =>', user)
     console.log('userData =>', userData)
     console.log('signIn =>',signIn)
-
-    
 
     if(loading) {
         return  <Loading />
@@ -71,6 +69,7 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="AboutUs" component={AboutUsScreen} />
             <Drawer.Screen name="OrderCategory" component={OrderCategoryScreen} />
             <Drawer.Screen name="FreshBasket" component={FreshBasketScreen} />
+            <Drawer.Screen name="Location" component={LocationScreen} />
             {signIn ? 
                  <>
                     <Drawer.Screen name="MyOrders" component={MyOrdersScreen} />
@@ -81,14 +80,16 @@ export default function DrawerNavigation() {
                     <Drawer.Screen name="Cart" component={CartScreen} />
                     <Drawer.Screen name="AddDeliveryAddress" component={AddDeliveryAddress} />
                     <Drawer.Screen name="OrderSummary" component={OrderSummary} />
-                    <Drawer.Screen name="Location" component={LocationScreen} />
                     <Drawer.Screen name="PaymentOptions" component={PaymentOptions} />
                     <Drawer.Screen name="UpiOptions" component={UpiOptions} />
                     <Drawer.Screen name="CardOptions" component={CardOptions} />
+                    <Drawer.Screen name="EditProfile" component={EditProfileScreen} />
+                    <Drawer.Screen name="ChangePassword" component={ChangePassword} />
                 </>
             :
                 <>
                     <Drawer.Screen name="Login" component={LoginScreen} />
+                    <Drawer.Screen name="PhoneLogin" component={LoginWithPhone} />
                     <Drawer.Screen name="Register" component={RegistrationScreen} />
                 </>
             }

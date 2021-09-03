@@ -1,14 +1,17 @@
-import React from 'react';
-import {View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity, Pressable} from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Badge } from 'react-native-paper';
 
 import {cartSelector} from '../features/cart'
 import {useSelector} from 'react-redux'
+import {locationSelector} from '../features/location'
 
 export default function PrimaryHeader(props) {
 
     const {navigation} = props;
+
+    const {location} = useSelector(locationSelector);
 
     const {items} = useSelector(cartSelector);
 
@@ -19,6 +22,10 @@ export default function PrimaryHeader(props) {
     const action = () => {
         navigation.toggleDrawer();
       }
+
+    const getLocation = () => {
+      return (!location) ? 'Kota' : location;
+    }
   
     return (
         <SafeAreaView style={styles.container}>
@@ -29,10 +36,15 @@ export default function PrimaryHeader(props) {
                     size={30}
                     onPress={action}
                 />
-                <View style={{ paddingLeft: 12}}>
-                    <Text style={styles.location}>Baran</Text>
+                <Pressable 
+                  style={{ paddingLeft: 12}}
+                  onPress={() => navigation.navigate('Location')}
+                  >
+                    <Text style={styles.location}>
+                    {getLocation()}
+                    </Text>
                     <Text style={styles.subLocation}>Rajasthan</Text>
-                </View>
+                </Pressable>
                 <MaterialCommunityIcons 
                     name="pencil"
                     color="#37c7ad"

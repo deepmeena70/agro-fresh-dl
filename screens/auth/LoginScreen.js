@@ -1,34 +1,29 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import firebase from '../../firebase'
-import {useDispatch, useSelector} from 'react-redux'
-import {signingIn, fetchUser, userSelector} from '../../features/user'
-
+import {useDispatch} from 'react-redux'
+import {gettingUser} from '../../features/user';
 
 export default function LoginScreen({navigation}) {
     const dispatch = useDispatch()
-    const {user,loading, hasErrors, signIn} = useSelector(userSelector)
    
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const onLogin = async () => {
-        if(signIn){
-            console.log('you already logged in')
-        } else {
-            firebase
-            .auth()
-            .signInWithEmailAndPassword(email,password)
-            .then(() => {
-                dispatch(signingIn())
-                navigation.navigate('Home')
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-        } 
+    const onLogin = () => {
+    
+        firebase
+        .auth()
+        .signInWithEmailAndPassword(email,password)
+        .then((user) => {
+            console.log('user from login >>>', user)
+            dispatch(gettingUser(user.user))
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+         
     }
 
     return (
@@ -55,12 +50,16 @@ export default function LoginScreen({navigation}) {
                 >
                     Login
                 </Button>
+                <View style={{ alignItems:'center' }}>
+                    <Text style={{ fontSize: 18, marginTop:12}}>Or</Text>
+                    <Button onPress={() => navigation.navigate('PhoneLogin')}>Login With Mobile</Button>
+                </View>
                 <View style={styles.registerContainer}>
-                    <Text style={styles.text}>Not a member ?</Text>
+                    <Text style={styles.text}>Not registered ?</Text>
                     <TouchableOpacity
                         onPress={() => navigation.navigate('Register')}
                     >
-                        <Text style={styles.textSignUp}>Register</Text>
+                        <Text style={styles.textSignUp}>Register Here</Text>
                     </TouchableOpacity>
                 </View>
             </View>

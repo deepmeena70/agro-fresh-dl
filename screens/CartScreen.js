@@ -7,7 +7,7 @@ import {cartSelector, deleteFromCart, changeQty} from '../features/cart';
 import {getCartDetails} from '../features/cartDetails';
 
 import SecondaryHeader from '../components/SecondaryHeader'
-import {getDeliveryAddress, deliveryAddressSelector} from '../features/deliveryAddress'
+import {getDeliveryAddress, clearDeliveryAddress, deliveryAddressSelector} from '../features/deliveryAddress'
 import { userSelector } from '../features/user';
 
 
@@ -20,12 +20,10 @@ export default function CartScreen({route, navigation}) {
 
     const [code, setCode] = useState('');
 
-    const pickerRef = useRef();
-
-
     useEffect(() => {
-        dispatch(getDeliveryAddress(user))
-    },[dispatch, user]);
+        dispatch(clearDeliveryAddress())
+        dispatch(getDeliveryAddress(user.uid))
+    },[dispatch]);
 
     const deleteItem = (name) => {
         dispatch(deleteFromCart(name))
@@ -159,7 +157,9 @@ export default function CartScreen({route, navigation}) {
             'deliveryCharge': getDeliveryCharge(),
             'grandTotal' : getGrandTotal(),
             'allSaving' : getAllSaving(),
-            'deliveryAddress': deliveryAddress
+            'user' : user.displayName,
+            'deliveryAddress': deliveryAddress,
+            'phone': user.phoneNumber
         }
 
         dispatch(getCartDetails(details));
@@ -374,9 +374,11 @@ export default function CartScreen({route, navigation}) {
 
         
             </ScrollView>
-            <View>
-                <Button mode="contained" onPress={() => handleProceed()} labelStyle={{ color:"white" }}>Proceed to Pay</Button>
-            </View>
+            {items.length > 0 &&
+                <View>
+                    <Button mode="contained" onPress={() => handleProceed()} labelStyle={{ color:"white" }}>Proceed to Pay</Button>
+                </View>
+            }
         </View>
 
     )

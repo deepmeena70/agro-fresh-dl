@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
 
 export const initialState = {
     userData: null,
@@ -11,28 +10,28 @@ const userDataSlice = createSlice({
     name: 'userData',
     initialState,
     reducers: {
-        setUserDataLoading(state){
+        loading(state){
             state.userDataLoading = true;
         },
-        setUserDataNotLoaded(state) {
-            Object.assign(state, initialState);
-        },
-        setUserData(state, action) {
+        getUserData(state, action) {
             state.userDataLoading = false;
             state.userData = action.payload;
         },
-        setUserDataFailed(state) {
+        failure(state) {
             state.userDataLoading = false;
             state.hasUserDataErrors = true;
+        },
+        clear(state) {
+            Object.assign(state, initialState);
         },
     }
 })
 
 export const {
-    setUserDataLoading,
-    setUserDataNotLoaded, 
-    setUserData, 
-    setUserDataFailed
+    loading,
+    failure, 
+    getUserData, 
+    clear
 } = userDataSlice.actions;
 
 export const userDataSelector = state => state.userData;
@@ -41,26 +40,31 @@ export default userDataSlice.reducer;
 
 export function fetchUserData(user){
     
-    return async (dispatch) => {
+    return (dispatch) => {
         if(!user) {
-            return dispatch(setUserDataNotLoaded())
-        }
-
-        dispatch(setUserDataLoading())
-
-        const userRef = firebase
-                            .firestore()
-                            .collection('users')
-                            .doc(user);
-        const snapshot = await userRef.get();
-
-        if(!snapshot.exists) {
-            dispatch(setUserDataFailed())
             return;
         }
-        // console.log(snapshot.data())
-        dispatch(setUserData(snapshot.data()))     
+
+        dispatch(loading())
+
+        const data = {
+            displayName: user.displayName,
+            email: user.email,
+            phone: user.phoneNumber,
+        };
+
+        console.log('userData slice >>>',user);
+
+        console.log('user data >>>',data);
+
+        dispatch(getUserData(data));
        
+    }
+}
+
+export function clearUserData() {
+    return (dispatch) => {
+        dispatch(clear());
     }
 }
 
