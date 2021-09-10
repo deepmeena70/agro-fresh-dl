@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity, Pressable} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TextInput, SafeAreaView, TouchableOpacity, Pressable, ToastAndroid} from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
 import { Badge } from 'react-native-paper';
 
@@ -7,9 +7,31 @@ import {cartSelector} from '../features/cart'
 import {useSelector} from 'react-redux'
 import {locationSelector} from '../features/location'
 
+import { userSelector } from '../features/user';
+
+const Toast = ({ visible, message }) => {
+  if (visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
+
 export default function PrimaryHeader(props) {
 
+    const {signIn} = useSelector(userSelector);
+
     const {navigation} = props;
+
+    const [visibleToast, setvisibleToast] = useState(false);
+
+    useEffect(() => setvisibleToast(false), [visibleToast]);
 
     const {location} = useSelector(locationSelector);
 
@@ -25,6 +47,23 @@ export default function PrimaryHeader(props) {
 
     const getLocation = () => {
       return (!location) ? 'Kota' : location;
+    }
+
+    const toCart = () => {
+      if(!signIn) {
+          return setvisibleToast(true); 
+                
+      }
+
+      navigation.navigate('Cart');
+    }
+
+    const toNotification = () => {
+      if(!signIn) {
+        return setvisibleToast(true);
+      }
+
+      navigation.navigate('Notification')
     }
   
     return (
@@ -57,10 +96,10 @@ export default function PrimaryHeader(props) {
                       name="bell"
                       color="#37c7ad"
                       size={22}
-                      onPress={() => navigation.navigate('Notification')}
+                      onPress={() => toNotification()}
                   />
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Cart')}
+                    onPress={() => toCart()}
                   >
                     <MaterialCommunityIcons 
                         name="cart"
@@ -90,14 +129,14 @@ export default function PrimaryHeader(props) {
                 />
                 
             </View>
-    
+            <Toast visible={visibleToast} message="Not signed in!" />
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-    //   backgroundColor: 'grey',
+    //backgroundColor: 'grey',
       height:150,
       paddingTop:50,
       paddingLeft:12,

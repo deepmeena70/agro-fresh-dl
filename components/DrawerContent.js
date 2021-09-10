@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ToastAndroid } from 'react-native';
 import {
   DrawerItem,
   DrawerContentScrollView,
@@ -17,6 +17,20 @@ import { useSelector, useDispatch} from 'react-redux'
 import { userSelector, clearUser } from '../features/user'
 import {userDataSelector, clearUserData} from '../features/userData'
 
+const Toast = ({ visible, message }) => {
+  if (visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
+
 
 export default function DrawerContent(props) {
 
@@ -27,6 +41,10 @@ export default function DrawerContent(props) {
   const {userData, userDataLoading, hasUserDataErrors} = useSelector(userDataSelector)
   const {navigation} = props;
 
+  const [visibleToast, setvisibleToast] = useState(false);
+
+    useEffect(() => setvisibleToast(false), [visibleToast]);
+
   const userName = () => {
       const nameArray = String(userData.displayName).split('');
       return nameArray[0];
@@ -36,6 +54,14 @@ export default function DrawerContent(props) {
     dispatch(clearUser());
     dispatch(clearUserData());
     navigation.navigate('Home')
+  }
+
+  const notificationToggle = () => {
+    if(!signIn) {
+      return setvisibleToast(true);
+    }
+
+    (!notify)? setNotify(true) : setNotify(false);
   }
 
   return (
@@ -135,7 +161,7 @@ export default function DrawerContent(props) {
         </Drawer.Section>
         <Drawer.Section title="Preferences">
           <TouchableRipple 
-            onPress={() => {(!notify)? setNotify(true) : setNotify(false)}}
+            onPress={() => notificationToggle()}
             >
             <View style={styles.preference}>
               <Text>Notifications</Text>
@@ -146,6 +172,7 @@ export default function DrawerContent(props) {
           </TouchableRipple>
         </Drawer.Section>
       </View>
+      <Toast visible={visibleToast} message="Not signed in!" />
     </DrawerContentScrollView>
   );
 }

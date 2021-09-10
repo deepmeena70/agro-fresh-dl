@@ -1,14 +1,33 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import React,{useState, useEffect} from 'react'
+import { StyleSheet, Text, View, ToastAndroid } from 'react-native'
 import { TextInput } from 'react-native-paper';
 import SecondaryHeader from '../../components/SecondaryHeader'
 import {Button} from 'react-native-paper'
 import firebase from '../../firebase'
 
+const Toast = ({ visible, message }) => {
+    if (visible) {
+      ToastAndroid.showWithGravityAndOffset(
+        message,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+      return null;
+    }
+    return null;
+  };
+
 export default function ChangePassword({navigation}) {
     const [currentPassword, setCurrentPassword] = React.useState('');
     const [newPassword, setNewPassword] = React.useState('');
     const [confirmPassword, setConfirmPasswrord] = React.useState('');
+    const [message, setMessage] = React.useState('');
+
+    const [visibleToast, setvisibleToast] = useState(false);
+
+    useEffect(() => setvisibleToast(false), [visibleToast]);
 
     const changePassword = () => {
 
@@ -31,9 +50,18 @@ export default function ChangePassword({navigation}) {
                 .currentUser
                 .updatePassword(newPassword)
                 .then(() => {navigation.navigate('Account')})
-                .catch(err=> console.error(err))
+                .catch(err=> {
+                    console.error(err);
+                    setMessage(String(err));
+                    setvisibleToast(true)
+                })
             })
-            .catch(err=> console.error(err))
+            .catch(err=> {
+                console.error(err);
+                setMessage(String(err));
+                setvisibleToast(true)
+                
+            })
 
 
     }
@@ -63,6 +91,8 @@ export default function ChangePassword({navigation}) {
             >
                 Change Password
             </Button>
+
+            <Toast visible={visibleToast} message={message} />
         </View>
     )
 }

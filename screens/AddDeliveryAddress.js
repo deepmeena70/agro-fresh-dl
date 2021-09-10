@@ -2,39 +2,33 @@ import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { TextInput, Button } from 'react-native-paper';
 import {Picker} from '@react-native-picker/picker';
-import {fetchUser, userSelector} from '../features/user';
-import {useDispatch, useSelector} from 'react-redux';
+import {userSelector} from '../features/user';
+import {userDataSelector} from '../features/userData';
+import {useSelector} from 'react-redux';
 
 import SecondaryHeader from '../components/SecondaryHeader'
 
 import firebase from '../firebase'
 
 export default function AddDeliveryAddress({navigation}) {
-    const [name, setName] = useState('');
     const [houseNumber, setHouseNumber] = useState('');
     const [area, setArea] = useState('');
     const [landmark, setLandmark] = useState('');
-    const [mobileNumber, setMobileNumber] = useState('');
     const [selectedState, setSelectedState] = useState('Rajasthan');
-    const [selectedCity, setSelectedCity] = useState();
+    const [selectedCity, setSelectedCity] = useState('Kota');
     const [pincode, setPincode] = useState('');
 
-    const dispatch = useDispatch();
     const {user} = useSelector(userSelector);
+    const {userData} = useSelector(userDataSelector);
 
-    useEffect(() => {
-        dispatch(fetchUser())
-    },[dispatch])
+    console.log(userData)
+    console.log(user);
 
     const handleSave = () => {
-        console.log(user);
-
         const data = {
-            name,
             houseNumber,
             area,
             landmark,
-            mobileNumber,
             selectedState,
             selectedCity,
             pincode
@@ -43,7 +37,7 @@ export default function AddDeliveryAddress({navigation}) {
         firebase
             .firestore()
             .collection('deliveryAddress')
-            .doc(user)
+            .doc(user.uid)
             .set(data)
             .then(() => {
                 console.log('address added successfully');
@@ -56,7 +50,7 @@ export default function AddDeliveryAddress({navigation}) {
             <SecondaryHeader navigation={navigation} screenName="Add Delivery Address"/>
             <TextInput
                 label="Full Name"
-                onChangeText={text => setName(text)}
+                value={userData.displayName}
             />
             <TextInput
                 label="House No. & details"
@@ -72,7 +66,7 @@ export default function AddDeliveryAddress({navigation}) {
             />
             <TextInput
                 label="Mobile Number"
-                onChangeText={text => setMobileNumber(text)}
+                value={userData.phone}
             />
             <Picker
                 selectedValue={selectedState}
