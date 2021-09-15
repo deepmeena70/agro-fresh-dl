@@ -29,6 +29,7 @@ import CardOptions from '../screens/CardOptions'
 import EditProfileScreen from '../screens/EditProfileScreen'
 import ChangePassword from '../screens/auth/ChangePassword';
 import LoginWithPhone from '../screens/auth/loginWithPhone';
+import StripePayment from '../screens/payments/StripePayment';
 
 // components
 import Loading from '../components/Loading'
@@ -85,6 +86,7 @@ export default function DrawerNavigation() {
                     <Drawer.Screen name="CardOptions" component={CardOptions} />
                     <Drawer.Screen name="EditProfile" component={EditProfileScreen} />
                     <Drawer.Screen name="ChangePassword" component={ChangePassword} />
+                    <Drawer.Screen name="StripePayment" component={StripePayment} />
                 </>
             :
                 <>

@@ -8,6 +8,11 @@ import {useSelector} from 'react-redux';
 export default function CardOptions({navigation}) {
     const [checked, setChecked] = useState('payu');
     const {cartDetails} = useSelector(cartDetailsSelector);
+
+    const handleContinue = () => {
+        navigation.navigate('StripePayment');
+    }
+
     return (
         <View style={{ flex:1 }}>
             <SecondaryHeader navigation={navigation} screenName="Select" />

@@ -159,6 +159,7 @@ export default function CartScreen({route, navigation}) {
             'allSaving' : getAllSaving(),
             'user' : user.displayName,
             'deliveryAddress': deliveryAddress,
+            'email':user.email,
             'phone': user.phoneNumber
         }
 
