@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react'
-import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
+import {View, Text, StyleSheet, Image, Pressable, ScrollView} from 'react-native'
 import {useSelector, useDispatch} from 'react-redux'
 import {userSelector} from '../features/user'
 
@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
     console.log('current user from home >>>',user);
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <PrimaryHeader navigation={navigation} />
             <View style={styles.homeContainer}>
                 <Image 
@@ -79,7 +79,7 @@ export default function HomeScreen({ navigation }) {
                 </View>
 
             </View>
-        </View>
+        </ScrollView>
     )
 }
 
