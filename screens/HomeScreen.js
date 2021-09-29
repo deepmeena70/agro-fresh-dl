@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
     console.log('current user from home >>>',user);
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <PrimaryHeader navigation={navigation} />
             <View style={styles.homeContainer}>
                 <Image 
@@ -79,7 +79,7 @@ export default function HomeScreen({ navigation }) {
                 </View>
 
             </View>
-        </ScrollView>
+        </View>
     )
 }
 
@@ -88,32 +88,32 @@ const styles = StyleSheet.create({
         flex:1
     },
     homeContainer:{
-        height: 700,
+        flex: 1,
         alignItems:'center',
       },
       image:{
         marginTop:24,
         flex:.4,
-        width:390
+        width:"100%"
       },
       itemContainer:{
         flex:.6,
       },
       row:{
-        flex:.45,
+        flex:.4,
         flexDirection:'row',
-        marginTop:36,
+        marginTop:34,
       },
       items:{
         marginLeft:16.5,
         marginRight:12,
         alignItems:'center',
         justifyContent:'center',
-        height:134,
+        height:124,
         width:"80%",
         backgroundColor:"white",
         borderRadius:10,
-        padding:18,
+        padding:16,
         elevation:4,
         shadowColor: '#000',
         shadowOffset: { width: 1, height: 1 },
