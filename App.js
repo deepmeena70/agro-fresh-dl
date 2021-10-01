@@ -14,7 +14,6 @@ const theme = {
   },
 };
 
-
 export default function App() {
 
   return (

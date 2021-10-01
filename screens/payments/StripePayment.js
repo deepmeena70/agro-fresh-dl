@@ -9,9 +9,12 @@ import {API_URL} from "../../config";
 function PaymentScreen () {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
     const [loading, setLoading] = useState(false);
+    const {cartDetails} = useSelector(cartDetailsSelector);
+
+    console.log(cartDetails.grandTotal);
 
     const fetchPaymentSheetParams = async () => {
-        const response = await fetch(`${API_URL}/payment-sheet`, {
+        const response = await fetch(`${API_URL}/payment-sheet?total=${cartDetails.grandTotal}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
