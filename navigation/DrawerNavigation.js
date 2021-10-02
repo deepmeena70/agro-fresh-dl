@@ -28,7 +28,7 @@ import UpiOptions from '../screens/UpiOptions'
 import CardOptions from '../screens/CardOptions'
 import EditProfileScreen from '../screens/EditProfileScreen'
 import ChangePassword from '../screens/auth/ChangePassword';
-import LoginWithPhone from '../screens/auth/loginWithPhone';
+import LoginWithPhone from '../screens/auth/LoginWithPhone';
 import StripePayment from '../screens/payments/StripePayment';
 
 // components

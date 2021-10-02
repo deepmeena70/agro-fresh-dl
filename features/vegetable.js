@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 export const initialState = {
   vegetable: [],
@@ -51,8 +52,7 @@ export function fetchRegVeg(orderType){
     return async (dispatch) => {
         dispatch(loading())
 
-        const productsRef = firebase
-                            .firestore()
+        const productsRef = firestore()
                             .collection('products')
 
         let snapshot;
@@ -61,12 +61,14 @@ export function fetchRegVeg(orderType){
             snapshot = await productsRef
                 .where('bulk', '==', true)
                 .where('vegetable', '==', true)
+                .limit(1)
                 .get();
 
         } else {
              snapshot = await productsRef
                     .where('regular', '==', true)
                     .where('vegetable', '==', true)
+                    .limit(1)
                     .get();
         }
 
@@ -91,8 +93,7 @@ export function fetchRegVeg(orderType){
 
 export function vegetableClear() {
     return async (dispatch) => {
-        firebase
-            .auth()
+            auth()
             .signOut()
             .then(() => {
                 dispatch(clear())

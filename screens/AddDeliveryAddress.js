@@ -8,7 +8,7 @@ import {useSelector} from 'react-redux';
 
 import SecondaryHeader from '../components/SecondaryHeader'
 
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
 
 export default function AddDeliveryAddress({navigation}) {
     const [houseNumber, setHouseNumber] = useState('');
@@ -34,8 +34,7 @@ export default function AddDeliveryAddress({navigation}) {
             pincode
         }
 
-        firebase
-            .firestore()
+           firestore()
             .collection('deliveryAddress')
             .doc(user.uid)
             .set(data)

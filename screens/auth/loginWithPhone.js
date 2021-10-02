@@ -2,12 +2,13 @@ import React, {useState} from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { TextInput, Button } from 'react-native-paper';
 import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
-import firebase from '../../firebase';
+
+import firebase from '../../firebase'
 
 import {useDispatch} from 'react-redux';
 import {gettingUser} from '../../features/user';
 
-export default function loginWithPhone() {
+export default function LoginWithPhone() {
     const recaptchaVerifier = React.useRef(null);
 
     const [phoneNumber, setPhoneNumber] = useState('');

@@ -1,9 +1,8 @@
 import React,{useState, useEffect} from 'react'
 import { StyleSheet, Text, View, ToastAndroid } from 'react-native'
-import { TextInput } from 'react-native-paper';
+import { TextInput, Button } from 'react-native-paper';
 import SecondaryHeader from '../../components/SecondaryHeader'
-import {Button} from 'react-native-paper'
-import firebase from '../../firebase'
+import auth from '@react-native-firebase/auth';
 
 const Toast = ({ visible, message }) => {
     if (visible) {
@@ -35,18 +34,16 @@ export default function ChangePassword({navigation}) {
             return;
         }
 
-        const credential = firebase.auth.EmailAuthProvider.credential(
-            firebase.auth().currentUser.email,
+        const credential = auth.EmailAuthProvider.credential(
+            auth().currentUser.email,
             newPassword
         );
 
-        firebase
-            .auth()
+            auth()
             .currentUser
             .reauthenticateWithCredential(credential)
             .then(() => {
-                firebase
-                .auth()
+                auth()
                 .currentUser
                 .updatePassword(newPassword)
                 .then(() => {navigation.navigate('Account')})

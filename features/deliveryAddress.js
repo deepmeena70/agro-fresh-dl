@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
 
 export const initialState = {
   deliveryAddress: null,
@@ -31,7 +31,7 @@ export default deliveryAddressSlice.reducer;
 export function getDeliveryAddress (user) {
     return async (dispatch) => {
 
-        const ref = firebase.firestore().collection('deliveryAddress').doc(user)
+        const ref = firestore().collection('deliveryAddress').doc(user)
 
         const snapshot = await ref.get();
 

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
 
 export const initialState = {
     offers: [],
@@ -44,7 +44,7 @@ export function fetchOffers(){
     return async (dispatch) => {
         dispatch(loading())
 
-        const offersRef = firebase.firestore().collection('offers');
+        const offersRef = firestore().collection('offers');
         const snapshot = await offersRef.get();
 
         if(snapshot.empty){

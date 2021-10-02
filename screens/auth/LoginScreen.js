@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
-import firebase from '../../firebase'
+import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user';
 
@@ -13,8 +13,7 @@ export default function LoginScreen({navigation}) {
 
     const onLogin = () => {
     
-        firebase
-        .auth()
+        auth()
         .signInWithEmailAndPassword(email,password)
         .then((user) => {
             console.log('user from login >>>', user)

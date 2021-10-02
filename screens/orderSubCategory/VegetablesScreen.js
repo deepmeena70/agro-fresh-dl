@@ -11,12 +11,9 @@ export default function VegetablesScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    console.log('route from vegetable =>' , route.name);
-
     const {vegetable, vegetableBulk, loadVegetable, errorVegetable} = useSelector(vegetableSelector);
 
     const {items} = useSelector(cartSelector);
-
 
     useEffect(() => {
         dispatch(vegetableClear())
@@ -28,14 +25,6 @@ export default function VegetablesScreen({route, navigation}) {
 
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
-
-    function open() {
-    pickerRef.current.focus();
-    }
-
-    function close() {
-    pickerRef.current.blur();
-    }
 
     const products = () => {
         if(route.name == 'VegetablesBulk') {

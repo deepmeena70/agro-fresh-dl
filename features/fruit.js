@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 export const initialState = {
   fruit: [],
@@ -51,8 +52,7 @@ export function fetchRegFruit(orderType){
     return async (dispatch) => {
         dispatch(loading())
 
-        const productsRef = firebase
-                            .firestore()
+        const productsRef = firestore()
                             .collection('products')
   
         let snapshot;
@@ -91,8 +91,8 @@ export function fetchRegFruit(orderType){
 
 export function fruitClear() {
     return async (dispatch) => {
-        firebase
-            .auth()
+        
+            auth()
             .signOut()
             .then(() => {
                 dispatch(clear())

@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {userDataSelector} from '../features/userData';
 import {userSelector} from '../features/user';
 import {deliveryAddressSelector} from '../features/deliveryAddress'
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
 
 export default function EditProfileScreen({navigation}) {
     const {userData} = useSelector(userDataSelector);
@@ -23,8 +23,7 @@ export default function EditProfileScreen({navigation}) {
 
 
     const updateData = async () => {
-        const deliveryAddressRef = firebase
-                                    .firestore()
+        const deliveryAddressRef = firestore()
                                     .collection('deliveryAddress')
                                     .doc(user.uid);
 
@@ -52,16 +51,14 @@ export default function EditProfileScreen({navigation}) {
             return;
         } 
 
-        firebase
-            .firestore()
+            firestore()
             .collection('users')
             .doc(user)
             .update({
                 name,
             });
         
-        firebase
-            .firestore()
+            firestore()
             .collection('deliveryAddress')
             .doc(user)
             .update({

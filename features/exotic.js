@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import firebase from '../firebase'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 export const initialState = {
   exotic: [],
@@ -52,9 +53,8 @@ export function fetchRegExotic(orderType){
 
         dispatch(loading())
 
-        const productsRef = firebase
-                            .firestore()
-                            .collection('products')
+        const productsRef = firestore()
+            .collection('products')
         
         let snapshot;
         
@@ -92,8 +92,8 @@ export function fetchRegExotic(orderType){
 
 export function exoticClear() {
     return async (dispatch) => {
-        firebase
-            .auth()
+        
+            auth()
             .signOut()
             .then(() => {
                 dispatch(clear())

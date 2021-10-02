@@ -1,0 +1,31 @@
+{
+    "project_info": {
+        "project_number": "186433974952",
+        "project_id": "agrofresh-dl",
+        "storage_bucket": "agrofresh-dl.appspot.com"
+    },
+    "client": [{
+        "client_info": {
+            "mobilesdk_app_id": "1:186433974952:android:375faf4e2fdfc1c57dc89d",
+            "android_client_info": {
+                "package_name": "com.deep.expo.agrofreshdl"
+            }
+        },
+        "oauth_client": [{
+            "client_id": "186433974952-3cb5hcg7r35n8um6abpqjg509cc5vqs1.apps.googleusercontent.com",
+            "client_type": 3
+        }],
+        "api_key": [{
+            "current_key": "AIzaSyB_EeFigxPa2gTcMgC51CoAACmW3sQUm1E"
+        }],
+        "services": {
+            "appinvite_service": {
+                "other_platform_oauth_client": [{
+                    "client_id": "186433974952-3cb5hcg7r35n8um6abpqjg509cc5vqs1.apps.googleusercontent.com",
+                    "client_type": 3
+                }]
+            }
+        }
+    }],
+    "configuration_version": "1"
+}
