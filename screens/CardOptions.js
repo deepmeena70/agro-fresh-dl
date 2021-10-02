@@ -10,7 +10,7 @@ export default function CardOptions({navigation}) {
     const {cartDetails} = useSelector(cartDetailsSelector);
 
     const handleContinue = () => {
-        navigation.navigate('StripePayment');
+        navigation.navigate('RazorPayment');
     }
 
     return (
