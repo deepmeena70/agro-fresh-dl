@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 import SecondaryHeader from '../components/SecondaryHeader'
 import { userSelector } from '../features/user';
 import {cartDetailsSelector} from '../features/cartDetails';
+import RazorpayCheckout from 'react-native-razorpay';
 
 
 export default function CartScreen({route, navigation}) {
@@ -20,6 +21,33 @@ export default function CartScreen({route, navigation}) {
 
     if(cartDetails === null) {
         return <Text>Loading...</Text>
+    }
+
+    console.log(cartDetails)
+
+
+    const paymentHandler = () => {
+        var options = {
+            description: 'Credits towards AgroFreshDL',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'INR',
+            key: 'rzp_test_UBjdvnwSJMGRzh',
+            amount: cartDetails.grandTotal*100,
+            name: 'AgroFreshDL',
+            prefill: {
+            email: cartDetails.email,
+            contact: cartDetails.phone,
+            name: cartDetails.user
+            },
+            theme: {color: '#37c4ad'}
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            alert(`Success: ${data.razorpay_payment_id}`);
+        }).catch((error) => {
+            // handle failure
+            alert(`Error: ${error.code} | ${error.description}`);
+        });
     }
 
     return (
@@ -192,7 +220,7 @@ export default function CartScreen({route, navigation}) {
         
             </ScrollView>
             <View>
-                <Button mode="contained" onPress={() => handleProceed()} labelStyle={{ color:"white" }}>Proceed for ₹{cartDetails.grandTotal}</Button>
+                <Button mode="contained" onPress={paymentHandler} labelStyle={{ color:"white" }}>Proceed for ₹{cartDetails.grandTotal}</Button>
             </View>
         </View>
 
