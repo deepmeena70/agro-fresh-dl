@@ -5,21 +5,82 @@ import { RadioButton, Button } from 'react-native-paper';
 
 import {cartDetailsSelector} from '../features/cartDetails';
 import {useSelector} from 'react-redux';
+import RazorpayCheckout from 'react-native-razorpay';
+import AllInOneSDKManager from 'paytm_allinone_react-native';
 
 export default function PaymentOptions({navigation}) {
     const [checked, setChecked] = useState('upi');
     const {cartDetails} = useSelector(cartDetailsSelector);
 
+    const cardHandler = () => {
+        var options = {
+            description: 'Credits towards AgroFreshDL',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'INR',
+            key: 'rzp_test_UBjdvnwSJMGRzh',
+            amount: cartDetails.grandTotal*100,
+            name: 'AgroFreshDL',
+            prefill: {
+            email: cartDetails.email,
+            contact: cartDetails.phone,
+            name: cartDetails.user
+            },
+            theme: {color: '#37c4ad'}
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            alert(`Success: ${data.razorpay_payment_id}`);
+        }).catch((error) => {
+            // handle failure
+            alert(`Error: ${error.code} | ${error.description}`);
+        });
+    }
+
+
+    const [mid, setMid] = useState('AliSub58582630351896');
+    const [orderId, setOrderId] = useState('PARCEL15942011933');
+    const [amount, setAmount] = useState('1');
+    const [tranxToken, setTranxToken] = useState('b9097bda72af4db0a9aa2d00e58a7d451594201196818');
+    const [showToast, setShowToast] = useState('');
+    const [isStaging, setIsStaging] = useState(false);
+    const [appInvokeRestricted, setIsAppInvokeRestricted] = useState(false);
+    const [result, setResult] = useState('');
+
+    const paytmHandler = () => {
+        AllInOneSDKManager.startTransaction(
+            orderId,
+            mid,
+            tranxToken,
+            amount,
+            '',
+            isStaging,
+            appInvokeRestricted,
+           )
+           .then((result) => {
+            updateUI(result);
+           })
+           .catch((err) => {
+            handleError(err);
+           });
+    }
+
+    const codHandler = () => {
+
+    }
+
     const handleContinue = () => {
         console.log("continue")
         switch(checked){
-            case 'upi':
-                navigation.navigate('UpiOptions');
+            case 'paytm':
+                paytmHandler();
                 break;
             case 'card':
-                navigation.navigate('CardOptions'); 
+                cardHandler();
+                break;
         }
     }
+
+    
 
     return (
         <View style={styles.container}>
@@ -27,19 +88,11 @@ export default function PaymentOptions({navigation}) {
             <View style={{ flex:1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                     <RadioButton
-                        value="upi"
-                        status={ checked === 'upi' ? 'checked' : 'unchecked' }
-                        onPress={() => setChecked('upi')}
+                        value="paytm"
+                        status={ checked === 'paytm' ? 'checked' : 'unchecked' }
+                        onPress={() => setChecked('paytm')}
                     />
-                    <Text style={{ fontSize:18 }}>UPI</Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                    <RadioButton
-                        value="wallet"
-                        status={ checked === 'wallet' ? 'checked' : 'unchecked' }
-                        onPress={() => setChecked('wallet')}
-                    />
-                    <Text style={{ fontSize:18 }}>Wallet</Text>
+                    <Text style={{ fontSize:18 }}>Paytm</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                     <RadioButton
@@ -48,14 +101,6 @@ export default function PaymentOptions({navigation}) {
                         onPress={() => setChecked('card')}
                     />
                     <Text style={{ fontSize:18 }}>Credit/Debit/ATM Card</Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                    <RadioButton
-                        value="banking"
-                        status={ checked === 'banking' ? 'checked' : 'unchecked' }
-                        onPress={() => setChecked('banking')}
-                    />
-                    <Text style={{ fontSize:18 }}>Net Banking</Text>
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                     <RadioButton

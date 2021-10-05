@@ -5801,6 +5801,11 @@ path-parse@^1.0.6:
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
   integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
+paytm_allinone_react-native@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/paytm_allinone_react-native/-/paytm_allinone_react-native-1.0.9.tgz#b706f939b5f8db3a2cbd03198785565b7699a6ad"
+  integrity sha512-BzRub9vR4kd4881D0Pc0WGMEIS+stKn+bXnmhJyPpvljL0hMu9dkso25KHL9MtzdNG+2yFtdjWyRV8FgL5cMhw==
+
 phin@^2.9.1:
   version "2.9.3"
   resolved "https://registry.yarnpkg.com/phin/-/phin-2.9.3.tgz#f9b6ac10a035636fb65dfc576aaaa17b8743125c"
