@@ -141,15 +141,15 @@ const styles = StyleSheet.create({
         fontSize:12
     },
     pickerContainer:{
-        flex:.1, 
+        flex:1,
+        alignItems: 'center',
+        justifyContent: 'center',
         borderWidth:1, 
         borderColor:"lightgrey", 
         width:120, 
-        paddingBottom:42
     },
     picker:{
         width:120,
-        paddingBottom:12
     },
     pickerItem:{
         fontSize:14, 
