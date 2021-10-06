@@ -3,6 +3,7 @@ import RootNavigation from './navigation/RootNavigation';
 import { Provider } from 'react-redux'
 import store from './store'
 import { DefaultTheme ,Provider as PaperProvider } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
 
 const theme = {
   ...DefaultTheme,
@@ -20,6 +21,7 @@ export default function App() {
     <Provider store={store}>
       <PaperProvider theme={theme}>
         <RootNavigation />
+        <StatusBar StatusBarStyle="auto" />
       </PaperProvider>
     </Provider>
   );

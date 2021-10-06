@@ -1,17 +1,51 @@
-import React from 'react'
-import {View, Text, StyleSheet, Image, Pressable} from 'react-native'
+import React, {useState, useEffect} from 'react'
+import {
+    View, 
+    Text, 
+    StyleSheet, 
+    Image, 
+    Pressable, 
+    SafeAreaView,
+    ToastAndroid
+} from 'react-native'
 import {useSelector} from 'react-redux'
 import {userSelector} from '../features/user'
 
 // components
 import PrimaryHeader from '../components/PrimaryHeader'
 
+
+const Toast = ({ visible, message }) => {
+    if (visible) {
+      ToastAndroid.showWithGravityAndOffset(
+        message,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50
+      );
+      return null;
+    }
+    return null;
+  };
+
 export default function HomeScreen({ navigation }) {
 
     const {signIn} = useSelector(userSelector)
 
+    const [visibleToast, setvisibleToast] = useState(false);
+
+    useEffect(() => setvisibleToast(false), [visibleToast]);
+
+    const toast = () => {
+        if(!signIn) {
+          return setvisibleToast(true);
+        }
+        
+      }
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <PrimaryHeader navigation={navigation} />
             <View style={styles.homeContainer}>
                 <Image 
@@ -60,7 +94,7 @@ export default function HomeScreen({ navigation }) {
                     </Pressable>
                     <Pressable
                         style={{ flex:1 }}
-                        onPress={() => (signIn)?(navigation.navigate('Offers')):(console.log("sign in first"))}
+                        onPress={() => (signIn)?(navigation.navigate('Offers')):(toast())}
                     >
                         <View style={styles.items}>
                         <Image
@@ -74,7 +108,8 @@ export default function HomeScreen({ navigation }) {
                 </View>
 
             </View>
-        </View>
+            <Toast visible={visibleToast} message="Not signed in!" />
+        </SafeAreaView>
     )
 }
 
