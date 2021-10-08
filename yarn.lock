@@ -2,7 +2,14 @@
 # yarn lockfile v1
 
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.14.5", "@babel/code-frame@^7.8.3":
+"@babel/code-frame@^7.0.0":
+  version "7.15.8"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.15.8.tgz#45990c47adadb00c03677baa89221f7cc23d2503"
+  integrity sha512-2IAnmn8zbvC/jKYhq5Ki9I+DwjlrtMPUCH/CpHvqI4dNnlwHwsxoIhlc8WcYY5LSYknXQtAlFYuHfqAFCvQ4Wg==
+  dependencies:
+    "@babel/highlight" "^7.14.5"
+
+"@babel/code-frame@^7.14.5", "@babel/code-frame@^7.8.3":
   version "7.14.5"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.14.5.tgz#23b08d740e83f49c5e59945fbf1b43e80bbf4edb"
   integrity sha512-9pzDqyc6OLDaqe+zbACgFkb6fKMNG6CObKpnYXChRsvYGyEdc7CA2BaqeOM+vOtCS5ndmJicPJhKAwYRI6UfFw==
@@ -64,12 +71,21 @@
     semver "^6.3.0"
     source-map "^0.5.0"
 
-"@babel/generator@^7.15.4", "@babel/generator@^7.5.0", "@babel/generator@^7.9.0":
+"@babel/generator@^7.15.4", "@babel/generator@^7.9.0":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.15.4.tgz#85acb159a267ca6324f9793986991ee2022a05b0"
   integrity sha512-d3itta0tu+UayjEORPNz6e1T3FtvWlP5N4V5M+lhp/CxT4oAA7/NcScnpRyspUMLK6tu9MNHmQHxRykuN2R7hw==
   dependencies:
     "@babel/types" "^7.15.4"
+    jsesc "^2.5.1"
+    source-map "^0.5.0"
+
+"@babel/generator@^7.5.0":
+  version "7.15.8"
+  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.15.8.tgz#fa56be6b596952ceb231048cf84ee499a19c0cd1"
+  integrity sha512-ECmAKstXbp1cvpTTZciZCgfOt6iN64lR0d+euv3UZisU5awfRawOvg07Utn/qBGuH4bRIEZKrA/4LzZyXhZr8g==
+  dependencies:
+    "@babel/types" "^7.15.6"
     jsesc "^2.5.1"
     source-map "^0.5.0"
 
@@ -280,7 +296,12 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/parser@^7.0.0", "@babel/parser@^7.15.4", "@babel/parser@^7.15.5", "@babel/parser@^7.9.0":
+"@babel/parser@^7.0.0":
+  version "7.15.8"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.15.8.tgz#7bacdcbe71bdc3ff936d510c15dcea7cf0b99016"
+  integrity sha512-BRYa3wcQnjS/nqI8Ac94pYYpJfojHVvVXJ97+IDCImX4Jc8W8Xv1+47enbruk+q1etOpsQNwnfFcNGw+gtPGxA==
+
+"@babel/parser@^7.15.4", "@babel/parser@^7.15.5", "@babel/parser@^7.9.0":
   version "7.15.7"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.15.7.tgz#0c3ed4a2eb07b165dfa85b3cc45c727334c4edae"
   integrity sha512-rycZXvQ+xS9QyIcJ9HXeDWf1uxqlbVFAUq0Rq0dbc50Zb/+wUe/ehyfzGfm9KZZF0kBejYgxltBXocP+gKdL2g==
@@ -3067,9 +3088,9 @@ cli-cursor@^2.1.0:
     restore-cursor "^2.0.0"
 
 cli-spinners@^2.0.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.6.0.tgz#36c7dc98fb6a9a76bd6238ec3f77e2425627e939"
-  integrity sha512-t+4/y50K/+4xcCRosKkA7W4gTr1MySvLV0q+PxmG7FJ5g+66ChKurYjxBCjHggHH3HA5Hh9cy+lcUGWDqVH+4Q==
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/cli-spinners/-/cli-spinners-2.6.1.tgz#adc954ebe281c37a6319bfa401e6dd2488ffb70d"
+  integrity sha512-x/5fWmGMnbKQAaNwN+UZlV79qBLM9JFnJuJ03gIi5whrob0xV0ofNVHy9DhwGdsMJQc2OKv0oGmLzvaqvAVv+g==
 
 cli-width@^2.0.0:
   version "2.2.1"
@@ -5312,12 +5333,7 @@ micromatch@^4.0.4:
     braces "^3.0.1"
     picomatch "^2.2.3"
 
-mime-db@1.49.0:
-  version "1.49.0"
-  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.49.0.tgz#f3dfde60c99e9cf3bc9701d687778f537001cbed"
-  integrity sha512-CIc8j9URtOVApSFCQIF+VBkX1RwXp/oMMOrqdyXSBXq5RWNEsRfyj1kiRnQgmNXmHxPoFIxOroKA3zcU9P+nAA==
-
-"mime-db@>= 1.43.0 < 2":
+mime-db@1.50.0, "mime-db@>= 1.43.0 < 2":
   version "1.50.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.50.0.tgz#abd4ac94e98d3c0e185016c67ab45d5fde40c11f"
   integrity sha512-9tMZCDlYHqeERXEHO9f/hKfNXhre5dK2eE/krIvUjZbS2KPcqGDfNShIWS1uW9XOTKQKqK6qbeOci18rbfW77A==
@@ -5335,11 +5351,11 @@ mime-types@2.1.11:
     mime-db "~1.23.0"
 
 mime-types@~2.1.24:
-  version "2.1.32"
-  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.32.tgz#1d00e89e7de7fe02008db61001d9e02852670fd5"
-  integrity sha512-hJGaVS4G4c9TSMYh2n6SQAGrC4RnfU+daP8G7cSCmaqNjiOoUY0VHCMS42pxnQmVF1GWwFhbHWn3RIxCqTmZ9A==
+  version "2.1.33"
+  resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.33.tgz#1fa12a904472fafd068e48d9e8401f74d3f70edb"
+  integrity sha512-plLElXp7pRDd0bNZHw+nMd52vRYjLwQjygaNg7ddJ2uJtTlmnTCjWuPKxVu6//AdaRuME84SvLW91sIkBqGT0g==
   dependencies:
-    mime-db "1.49.0"
+    mime-db "1.50.0"
 
 mime@1.6.0, mime@^1.3.4:
   version "1.6.0"
@@ -6016,9 +6032,9 @@ range-parser@~1.2.1:
   integrity sha512-Hrgsx+orqoygnmhFbKaHE6c296J+HTAQXoxEF6gNupROmmGJRoyzfG3ccAveqCBrwr/2yxQ5BVd/GTl5agOwSg==
 
 react-devtools-core@^4.6.0:
-  version "4.18.0"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.18.0.tgz#06b2375dcea7858c957d1779cc2339d2a0af200a"
-  integrity sha512-Kg/LhDkdt9J0ned1D1RfeuSdX4cKW83/valJLYswGdsYc0g2msmD0kfYozsaRacjDoZwcKlxGOES1wrkET5O6Q==
+  version "4.19.1"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.19.1.tgz#bc37c2ef2f48f28c6af4c7292be9dca1b63deace"
+  integrity sha512-2wJiGffPWK0KggBjVwnTaAk+Z3MSxKInHmdzPTrBh1mAarexsa93Kw+WMX88+XjN+TtYgAiLe9xeTqcO5FfJTw==
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
@@ -6159,7 +6175,7 @@ react-native-webview@11.6.2:
     escape-string-regexp "2.0.0"
     invariant "2.2.4"
 
-react-native@~0.63.4:
+react-native@0.63.4:
   version "0.63.4"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.63.4.tgz#2210fdd404c94a5fa6b423c6de86f8e48810ec36"
   integrity sha512-I4kM8kYO2mWEYUFITMcpRulcy4/jd+j9T6PbIzR0FuMcz/xwd+JwHoLPa1HmCesvR1RDOw9o4D+OFLwuXXfmGw==
@@ -6610,7 +6626,12 @@ shell-quote@^1.6.1:
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.7.2.tgz#67a7d02c76c9da24f99d20808fcaded0e0e04be2"
   integrity sha512-mRz/m/JVscCrkMyPqHc/bczi3OQHkLTqXHEFu0zDhK/qfv3UcOA4SVmRCLmos4bhjr9ekVQubj/R7waKapmiQg==
 
-signal-exit@^3.0.0, signal-exit@^3.0.2:
+signal-exit@^3.0.0:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.5.tgz#9e3e8cc0c75a99472b44321033a7702e7738252f"
+  integrity sha512-KWcOiKeQj6ZyXx7zq4YxSMgHRlod4czeBQZrPb8OKcohcqAXShm7E20kEMle9WBt26hFcAf0qLOcp5zmY7kOqQ==
+
+signal-exit@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.4.tgz#366a4684d175b9cab2081e3681fda3747b6c51d7"
   integrity sha512-rqYhcAnZ6d/vTPGghdrw7iumdcbXpsk1b8IG/rz+VWV51DM0p7XCtMoJ3qhPLIbp3tvyt3pKRbaaEMZYpHto8Q==

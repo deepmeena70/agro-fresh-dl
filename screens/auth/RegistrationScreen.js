@@ -1,119 +1,81 @@
-import React,{useState} from 'react';
-import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
+import React,{useState, useEffect} from 'react';
+import {View, StyleSheet, Text} from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
-import firebase from '../../firebase'
-import { FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
-
+import auth from '@react-native-firebase/auth'
 
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user'
 
 export default function LoginScreen({navigation}) {
 
-  const recaptchaVerifier = React.useRef(null);  
-
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [verificationId, setVerificationId] = React.useState();
-  const [verificationCode, setVerificationCode] = React.useState();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-
-  const firebaseConfig = firebase.apps.length ? firebase.app().options : undefined;
-  const [message, showMessage] = React.useState(
-    !firebaseConfig || Platform.OS === 'web'
-      ? {
-          text:
-            'To get started, provide a valid firebase config in App.js and open this snack on an iOS or Android device.',
-        }
-      : undefined
-  );
+  const [message, setMessage] = useState();
 
   const dispatch = useDispatch();
 
-  const onPressSendCode = async () => {
+  // If null, no SMS has been sent
+  const [confirm, setConfirm] = useState(null);
+
+  const [code, setCode] = useState('');
+
+
+    // Handle create account button press
+    async function registerHandler() {
+
+        try {
+          await auth().createUserWithEmailAndPassword(email, password)
+          confirmCode();
+          const update = {
+            displayName: name,
+          };
+          await auth().currentUser.updateProfile(update);
+
+          console.log('User account created & signed in!');
+        } catch (error) {
+          if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
+          }
     
-    // The FirebaseRecaptchaVerifierModal ref implements the
-    // FirebaseAuthApplicationVerifier interface and can be
-    // passed directly to `verifyPhoneNumber`.
-    try {
-        const phoneProvider = new firebase.auth.PhoneAuthProvider();
-        const verificationId = await phoneProvider.verifyPhoneNumber(
-        `+91${phoneNumber}`,
-        recaptchaVerifier.current
-        );
-        setVerificationId(verificationId);
-        showMessage({
-        text: 'Verification code has been sent to your phone.',
-        });
-    } catch (err) {
-        showMessage({ text: `Error: ${err.message}`, color: 'red' });
-    }
-      
-  }
+          if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+          }
+          console.error(error);
+        }
 
-  const attemptInvisibleVerification = true;
+        auth().onAuthStateChanged(user => {
+            dispatch(gettingUser(user));
+        })
 
-
-  const onSignUp = async () => {
-    if(name.length === 0){
-        console.log('Enter Name')
-    }
-    if(phoneNumber.length === 0){
-        console.log('Enter valid Mobile Number')
-    }
-    if(email.length === 0){
-        console.log('Enter Email')
-    }
-    if(password.length === 0){
-        console.log('Enter Password')
-    }
-
-    if(name.length === 0 || phoneNumber.length === 0 || email.length === 0 || password.length === 0) {
-        return;
-    }
-
-    console.log(firebase.auth().currentUser)
-
-    try {
-        const credential = firebase.auth.PhoneAuthProvider.credential(
-          verificationId,
-          verificationCode
-        );
-        await firebase.auth().signInWithCredential(credential);
-        showMessage({ text: 'Verified successfully' });
-      } catch (err) {
-        setError(err);  
-        showMessage({ text: `Error: Invalid code`, color: 'red' });
       }
-
-    const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-
-    firebase
-        .auth()
-        .currentUser
-        .linkWithCredential(credential)
-        .then(() => {
-            console.log(firebase.auth().currentUser);
-            const user = firebase.auth().currentUser;
-
-            user.updateProfile({
-                displayName: name
-            }).then(() => {
-                dispatch(gettingUser(user));
-            })
-
-        }).catch(err => {console.log(err)});
-  }
-
+    
+      // Handle the verify phone button press
+      async function sendCodeHandler() {
+        const confirmation = await auth().verifyPhoneNumber(`+91${phoneNumber}`);
+        setConfirm(confirmation);
+      }
+    
+      // Handle confirm code button press
+      async function confirmCode() {
+        try {
+          const credential = auth.PhoneAuthProvider.credential(confirm.verificationId, code);
+          await auth().currentUser
+            .linkWithCredential(credential);
+        } catch (error) {
+          if (error.code == 'auth/invalid-verification-code') {
+            console.log('Invalid code.');
+          } else {
+            console.log('Account linking error');
+          }
+        }
+      }
+    
   return (
     <View style={styles.container}>
-        <FirebaseRecaptchaVerifierModal
-            ref={recaptchaVerifier}
-            firebaseConfig={firebaseConfig}
-            attemptInvisibleVerification={attemptInvisibleVerification}
-        />
+     
         <View style={styles.loginContainer}>
             <TextInput
                 label="Full Name"
@@ -134,10 +96,9 @@ export default function LoginScreen({navigation}) {
                 <View style={{ flex: 0.6, paddingRight:12 }}>
                     <TextInput
                         label="Enter OTP"
-                        onChangeText={setVerificationCode}
+                        onChangeText={text=> setCode(text)}
                         style={ styles.textInput}
                         mode="outlined"
-                        editable={!!verificationId}
                     />
                     {message ? 
                         <Text
@@ -155,7 +116,7 @@ export default function LoginScreen({navigation}) {
                 <View style={{ flex:0.4 }}>
                     <Button
                         mode="text"
-                        onPress={() => onPressSendCode()}
+                        onPress={sendCodeHandler}
                     >
                         {!error ? 'Send Code' : 'Resend Code'}
                     </Button>
@@ -178,7 +139,7 @@ export default function LoginScreen({navigation}) {
             />
             <Button 
                 mode="contained" 
-                onPress={() => onSignUp()}
+                onPress={registerHandler}
                 style={styles.button}
                 labelStyle={{ color:"#fff" }}
             >
@@ -186,7 +147,6 @@ export default function LoginScreen({navigation}) {
             </Button>
      
         </View>
-      {attemptInvisibleVerification && <FirebaseRecaptchaBanner />}
     </View>
   );
 };
