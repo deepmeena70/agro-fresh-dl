@@ -5,18 +5,15 @@ import { RadioButton, Button } from 'react-native-paper';
 
 import {cartDetailsSelector} from '../features/cartDetails';
 import {useSelector} from 'react-redux';
-import * as Random from 'expo-random';
 import RazorpayCheckout from 'react-native-razorpay';
 import AllInOneSDKManager from 'paytm_allinone_react-native';
 import firestore from '@react-native-firebase/firestore';
 
+import {API_URL} from '../config'
+
 export default function PaymentOptions({navigation}) {
     const [checked, setChecked] = useState('upi');
     const {cartDetails} = useSelector(cartDetailsSelector);
-
-    const order_id_generator = () => {
-        return "AFOD"+Random.getRandomBytes(8).join("");
-    }
 
     const cardHandler = () => {
         var options = {
@@ -44,17 +41,13 @@ export default function PaymentOptions({navigation}) {
 
 
     const [mid, setMid] = useState('AliSub58582630351896');
-    const [orderId, setOrderId] = useState(order_id_generator);
+    const [orderId, setOrderId] = useState();
     const [amount, setAmount] = useState('1');
     const [tranxToken, setTranxToken] = useState('b9097bda72af4db0a9aa2d00e58a7d451594201196818');
     const [showToast, setShowToast] = useState('');
     const [isStaging, setIsStaging] = useState(false);
     const [appInvokeRestricted, setIsAppInvokeRestricted] = useState(false);
     const [result, setResult] = useState('');
-
-    console.log(orderId)
-
-    console.log();
 
 
     const paytmHandler = () => {
@@ -75,25 +68,24 @@ export default function PaymentOptions({navigation}) {
            });
     }
 
-    const codHandler = () => {
-        firestore()
-            .collection('orders')
-            .add({
-                orderId:order_id_generator(),
-                customer:cartDetails.user,
-                deliveryAddress: [cartDetails.deliveryAddress],
-                phone:cartDetails.phone,
-                items:[cartDetails.items],
-                offerCode: cartDetails.offerCode,
-                offerDiscount: cartDetails.offerDiscount,
-                subTotalBulk: cartDetails.subTotalBulk,
-                subTotalRegular: cartDetails.subTotalRegular,
-                totalBulk:cartDetails.totalBulk,
-                totalDiscountBulk: cartDetails.totalDiscountBulk,
-                totalDiscountRegular: cartDetails.totalDiscountRegular,
-                totalRegular: cartDetails.totalRegular,
-            })
-            .then(() =>console.log('order created!'))        
+    const codHandler = async () => {
+        console.log(API_URL);
+        try{
+            const response = await fetch(`${API_URL}/cod`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    
+                  }
+            );
+            const {orderId} = await response.json();
+            
+            console.log(orderId);
+
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     const handleContinue = () => {

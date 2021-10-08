@@ -50,6 +50,7 @@ export default vegetableSlice.reducer;
 
 export function fetchRegVeg(orderType){
     return async (dispatch) => {
+        dispatch(clear());
         dispatch(loading())
 
         const productsRef = firestore()
@@ -61,14 +62,14 @@ export function fetchRegVeg(orderType){
             snapshot = await productsRef
                 .where('bulk', '==', true)
                 .where('vegetable', '==', true)
-                .limit(1)
+                .limit(5)
                 .get();
 
         } else {
              snapshot = await productsRef
                     .where('regular', '==', true)
                     .where('vegetable', '==', true)
-                    .limit(1)
+                    .limit(5)
                     .get();
         }
 

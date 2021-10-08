@@ -50,7 +50,7 @@ export default exoticSlice.reducer;
 
 export function fetchRegExotic(orderType){
     return async (dispatch) => {
-
+        dispatch(clear())
         dispatch(loading())
 
         const productsRef = firestore()
@@ -62,12 +62,14 @@ export function fetchRegExotic(orderType){
             snapshot = await productsRef
                 .where('bulk', '==', true)
                 .where('exotic', '==', true)
+                .limit(5)
                 .get();
 
         } else {
              snapshot = await productsRef
                     .where('regular', '==', true)
                     .where('exotic', '==', true)
+                    .limit(5)
                     .get();
         }
 
