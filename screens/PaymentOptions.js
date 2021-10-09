@@ -3,17 +3,19 @@ import { StyleSheet, Text, View } from 'react-native'
 import SecondaryHeader from '../components/SecondaryHeader'
 import { RadioButton, Button } from 'react-native-paper';
 
-import {cartDetailsSelector} from '../features/cartDetails';
-import {useSelector} from 'react-redux';
+import {clearCart} from '../features/cart'
+import {cartDetailsSelector, clearCartDetails} from '../features/cartDetails';
+import {useSelector, useDispatch} from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import AllInOneSDKManager from 'paytm_allinone_react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import {API_URL} from '../config'
+import {API_URL} from '../config';
 
 export default function PaymentOptions({navigation}) {
     const [checked, setChecked] = useState('upi');
     const {cartDetails} = useSelector(cartDetailsSelector);
+    const dispatch = useDispatch();
 
     const cardHandler = () => {
         var options = {
@@ -68,6 +70,9 @@ export default function PaymentOptions({navigation}) {
            });
     }
 
+    console.log(cartDetails);
+
+
     const codHandler = async () => {
         console.log(API_URL);
         try{
@@ -80,8 +85,22 @@ export default function PaymentOptions({navigation}) {
                   }
             );
             const {orderId} = await response.json();
+            const items = {
+                orderId:orderId,
+                orderDetails: JSON.stringify(cartDetails),
+                orderCreatedAt: firestore.Timestamp.now()
+            }
+            firestore()
+                .collection('orders')
+                .add(items)
+                .then(() => {
+                    dispatch(clearCart());
+                    navigation.navigate('OrderDetails', {
+                        orderId: orderId
+                    });
+                })
+                .catch(err => console.log(err))
             
-            console.log(orderId);
 
         } catch (err) {
             console.error(err);

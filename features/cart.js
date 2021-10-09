@@ -74,3 +74,9 @@ export function changeQty (items, value) {
     }
 }
 
+export function clearCart () {
+    return (dispatch) => {
+        dispatch(clear());
+    }
+}
+

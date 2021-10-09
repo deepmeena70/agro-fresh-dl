@@ -33,3 +33,9 @@ export function getCartDetails (details) {
     }
 }
 
+export function clearCartDetails () {
+    return (dispatch) => {
+        dispatch(clear());
+    }
+}
+
