@@ -17,28 +17,67 @@ export default function PaymentOptions({navigation}) {
     const {cartDetails} = useSelector(cartDetailsSelector);
     const dispatch = useDispatch();
 
-    const cardHandler = () => {
-        var options = {
-            description: 'Credits towards AgroFreshDL',
-            image: 'https://i.imgur.com/3g7nmJC.png',
-            currency: 'INR',
-            key: 'rzp_test_UBjdvnwSJMGRzh',
-            amount: cartDetails.grandTotal*100,
-            name: 'AgroFreshDL',
-            prefill: {
-            email: cartDetails.email,
-            contact: cartDetails.phone,
-            name: cartDetails.user
-            },
-            theme: {color: '#37c4ad'}
+    const cardHandler = async () => {
+        
+        try{
+            const response = await fetch(`${API_URL}/razorpay/create?total=${cartDetails.grandTotal}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                
+              }
+            );
+            const {orderId, order} = await response.json();
+
+            console.log('razorpay >>>', orderId);
+            console.log('razorpay >>>', order);
+
+            var options = {
+                description: 'Credits towards AgroFreshDL',
+                image: 'https://i.imgur.com/3g7nmJC.png',
+                currency: 'INR',
+                key: 'rzp_test_UBjdvnwSJMGRzh',
+                amount: order.amount,
+                name: 'AgroFreshDL',
+                order_id: order.id,
+                prefill: {
+                    email: cartDetails.email,
+                    contact: cartDetails.phone,
+                    name: cartDetails.user
+                },
+                theme: {color: '#37c4ad'}
+            }
+            RazorpayCheckout.open(options).then((data) => {
+                // handle success
+                alert(`Success: ${data.razorpay_payment_id}`);
+                const setData = {
+                    orderDetails: JSON.stringify(cartDetails),
+                    orderCreatedAt: firestore.Timestamp.now(),
+                    orderId:orderId,
+                    razorpay_payment_id: data.razorpay_payment_id,
+                    razorpay_order_id: data.razorpay_order_id,
+                    razorpay_signature: data.razorpay_signature,
+                }
+                firestore()
+                    .collection('orders')
+                    .add(setData)
+                    .then(() => {
+                        dispatch(clearCart());
+                        navigation.navigate('OrderDetails', {
+                            orderId: orderId
+                        });
+                    })
+                    .catch (err => console.log(err));
+            }).catch((error) => {
+                // handle failure
+                alert(`Error: ${error.code} | ${error.description}`);
+            });
+
+        } catch(err){
+            console.log(err);
         }
-        RazorpayCheckout.open(options).then((data) => {
-            // handle success
-            alert(`Success: ${data.razorpay_payment_id}`);
-        }).catch((error) => {
-            // handle failure
-            alert(`Error: ${error.code} | ${error.description}`);
-        });
+  
     }
 
 
