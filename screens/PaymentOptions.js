@@ -5,6 +5,7 @@ import { RadioButton, Button } from 'react-native-paper';
 
 import {clearCart} from '../features/cart'
 import {cartDetailsSelector, clearCartDetails} from '../features/cartDetails';
+import {userSelector} from '../features/user';
 import {useSelector, useDispatch} from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import AllInOneSDKManager from 'paytm_allinone_react-native';
@@ -15,7 +16,10 @@ import {API_URL} from '../config';
 export default function PaymentOptions({navigation}) {
     const [checked, setChecked] = useState('upi');
     const {cartDetails} = useSelector(cartDetailsSelector);
+    const {user} = useSelector(userSelector);
     const dispatch = useDispatch();
+
+    console.log('user uid >>>',user.uid);
 
     const cardHandler = async () => {
         
@@ -25,9 +29,9 @@ export default function PaymentOptions({navigation}) {
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                
               }
             );
+
             const {orderId, order} = await response.json();
 
             console.log('razorpay >>>', orderId);
@@ -58,6 +62,12 @@ export default function PaymentOptions({navigation}) {
                     razorpay_payment_id: data.razorpay_payment_id,
                     razorpay_order_id: data.razorpay_order_id,
                     razorpay_signature: data.razorpay_signature,
+                    orderApproved: false,
+                    orderProcessed: false,
+                    orderShipping: false,
+                    orderDelivered: false,
+                    paymentMode: 'razorpay',
+                    uid: user.uid
                 }
                 firestore()
                     .collection('orders')
@@ -127,7 +137,13 @@ export default function PaymentOptions({navigation}) {
             const items = {
                 orderId:orderId,
                 orderDetails: JSON.stringify(cartDetails),
-                orderCreatedAt: firestore.Timestamp.now()
+                orderCreatedAt: firestore.Timestamp.now(),
+                orderApproved: false,
+                orderProcessed: false,
+                orderShipping: false,
+                orderDelivered: false,
+                paymentMode: 'cod',
+                uid: user.uid
             }
             firestore()
                 .collection('orders')
