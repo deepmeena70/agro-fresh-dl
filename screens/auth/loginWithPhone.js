@@ -1,9 +1,19 @@
 import React, {useState} from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, StyleSheet, ToastAndroid} from 'react-native'
 import {TextInput, Button} from 'react-native-paper';
 import auth from '@react-native-firebase/auth'
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user';
+
+const showToastWithGravityAndOffset = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
 
 export default function LoginWithPhone({navigation}) {
     const dispatch = useDispatch()
@@ -13,21 +23,39 @@ export default function LoginWithPhone({navigation}) {
     const [confirm, setConfirm] = useState(null);
 
     const sendCodeHandler = async () => {
-        console.log('send code handler');
-        const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNumber}`);
+
+        const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNumber}`)
+
         setConfirm(confirmation);
+
+        showToastWithGravityAndOffset("verification code sent")
     }
 
     const loginHandler = async () => {
+
+        if(code === undefined || code === null || code === '') {
+            return showToastWithGravityAndOffset('Please verify phone number')
+        }
+
         try {
             await confirm.confirm(code);
             auth().onAuthStateChanged((user) => {
                dispatch(gettingUser(user));
+               showToastWithGravityAndOffset("You logged in successfully")
             })
             navigation.navigate('Home');
           } catch (error) {
-            console.log(`${error.message}`);
+                if(error.code == 'auth/invalid-phone-number') {
+                    showToastWithGravityAndOffset('Invalid phone number')
+                } else if (error.code == 'auth/user-not-found') {
+                    showToastWithGravityAndOffset('User not found')
+                }else if (error.code == 'auth/invalid-password') {
+                    showToastWithGravityAndOffset('Invalid password')
+                } else {
+                    showToastWithGravityAndOffset('Login failed')
+                }
           }
+     
     }
 
     return (
@@ -37,6 +65,7 @@ export default function LoginWithPhone({navigation}) {
                     label="Mobile Number"
                     onChangeText={text => setPhoneNumber(text)}
                     mode="outlined"
+                    keyboardType="numeric"
                 />
                 <Button
                     style={styles.sendCodeBtn}
@@ -49,6 +78,7 @@ export default function LoginWithPhone({navigation}) {
                 label="Enter OTP"
                 onChangeText={text => setCode(text)}
                 mode="outlined"
+                keyboardType="numeric"
             />
             <Button 
                 mode="contained"

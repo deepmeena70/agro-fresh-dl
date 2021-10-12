@@ -1,9 +1,19 @@
 import React,{useState} from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, ToastAndroid} from 'react-native';
 import { TextInput, Button, Text } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user';
+
+const showToastWithGravityAndOffset = (msg) => {
+    ToastAndroid.showWithGravityAndOffset(
+      msg,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+  };
 
 export default function LoginScreen({navigation}) {
     const dispatch = useDispatch()
@@ -12,15 +22,27 @@ export default function LoginScreen({navigation}) {
     const [password, setPassword] = useState('');
 
     const onLogin = () => {
+
+        if(email === '' || password === '') {
+            return showToastWithGravityAndOffset('Fields cannot be empty')
+        }
     
         auth()
         .signInWithEmailAndPassword(email,password)
         .then((user) => {
-            console.log('user from login >>>', user)
             dispatch(gettingUser(user.user))
+            showToastWithGravityAndOffset("logined successfully");
         })
         .catch((error) => {
-            console.log(error)
+            if(error.code == 'auth/user-not-found') {
+                showToastWithGravityAndOffset("User not found");
+            } else if (error.code == 'auth/invalid-email') {
+                showToastWithGravityAndOffset("Invalid email")
+            }else if (error.code == 'auth/invalid-password') {
+                showToastWithGravityAndOffset('Invalid password')
+            }  else {
+                showToastWithGravityAndOffset("Login failed")
+            }
         })
          
     }

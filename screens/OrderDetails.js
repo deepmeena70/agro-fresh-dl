@@ -35,9 +35,11 @@ export default function OrderDetails({route, navigation}) {
 
     const {orderId} = route.params;
 
+
+    const [orderDetail, setOrderDetail] = useState();
+
     const [currentPosition, setCurrentPosition] = useState(1);
 
-    const [orderData, setOrderData] = useState();
 
     const orderPlaced = async () => {
         try{
@@ -51,7 +53,7 @@ export default function OrderDetails({route, navigation}) {
             }
 
             snapshot.forEach(doc => {
-                console.log(doc.data())
+                setOrderDetail(doc.data())
             });
         } catch (e) {
             console.log(e.message);
@@ -60,20 +62,21 @@ export default function OrderDetails({route, navigation}) {
     }
 
     useEffect(() =>{
+        setOrderDetail();
         orderPlaced();
     }, [orderId]);
 
-    
+    console.log("order detail >>>", orderDetail);
 
     
-
     return (
         <View style={styles.container}>
             <SecondaryHeader navigation={navigation} screenName="Order Details" />
             <View style={styles.orderDetails}>
-                <Text># order {orderId}</Text>
+                <Text>order {orderId}</Text>
                 <Text></Text>
             </View>
+            <Text style={{ margin:12 }}>Order Tracking</Text>
             <StepIndicator
                     customStyles={customStyles}
                     currentPosition={currentPosition}

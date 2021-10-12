@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import auth from '@react-native-firebase/auth';
 
 export const initialState = {
     user: null,
@@ -57,6 +58,7 @@ export function gettingUser(user){
 
 export function clearUser() {
     return (dispatch) => {
+        auth().signOut();
         dispatch(clear());        
     }
 }

@@ -16,13 +16,20 @@ export default function AccountScreen({navigation}) {
     const {deliveryAddress} = useSelector(deliveryAddressSelector);
 
     useEffect(() => {
-        dispatch(clearDeliveryAddress());
-        dispatch(getDeliveryAddress(user.uid))
-    }, [dispatch]);
+        dispatch(getDeliveryAddress(user.uid));
+    }, [dispatch, deliveryAddress]);
 
     const userName = () => {
         const nameArray = String(userData.displayName).split('');
         return nameArray[0];
+    }
+
+    const addDeliveryAddressHandler = () => {
+        navigation.navigate("EditProfile")
+    }
+
+    const updatePhoneHandler = () => {
+        navigation.navigate("EditProfile")
     }
 
     return (
@@ -65,7 +72,19 @@ export default function AccountScreen({navigation}) {
                         size={28}
                         color="grey"
                     />
-                    <Text style={styles.rowText}>{userData?userData.phone:''}</Text>
+                    <Text style={styles.rowText}>
+                        {
+                            userData?userData.phone:null
+                            
+                        }
+                        {
+                            !userData.phone && 
+                                <Pressable onPress={updatePhoneHandler}>
+                                    <Text style={{ color:"#37c4ad" }}>Update</Text>
+                                </Pressable>
+                        }
+                    </Text>
+                   
                 </View>
                 <View style={styles.row}>
                     <MaterialCommunityIcons 
@@ -83,12 +102,9 @@ export default function AccountScreen({navigation}) {
                             color="grey"
                         />
                     </View>
-                    <View style={{ flex:.3 }}>
-                        <Text style={styles.rowText}>********</Text>
-                    </View>
                     <View style={{ flex:.7 }}>
                         <Pressable onPress={() => navigation.navigate('ChangePassword')}>
-                            <Text style={{ color:"#37C7AD" }}>Change Password</Text>
+                            <Text style={{ color:"#37C7AD", marginLeft:14 }}>Update Password</Text>
                         </Pressable>
                     </View>
                 </View>
@@ -107,6 +123,12 @@ export default function AccountScreen({navigation}) {
                             {" "+deliveryAddress.selectedState}, 
                             {" "+deliveryAddress.pincode}
                         </Text>
+                    }
+                    {
+                        !deliveryAddress && 
+                            <Pressable onPress={addDeliveryAddressHandler}>
+                                <Text style={{ color:"#37c4ad" }}>Add Delivery Address</Text>
+                            </Pressable>
                     }
                 </View>
             </View>
@@ -145,7 +167,7 @@ const styles = StyleSheet.create({
         marginLeft:12
     },
     row:{
-        flex:.07,
+        flex:.085,
         flexDirection:'row',
         marginLeft:12,
         marginTop:24

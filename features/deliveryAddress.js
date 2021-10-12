@@ -9,7 +9,7 @@ const deliveryAddressSlice = createSlice({
     name: 'deliveryAddress',
     initialState,
     reducers: {
-        get: (state, action) => {
+        getUserData: (state, action) => {
             state.deliveryAddress = action.payload;
         },
         clear: (state) => {
@@ -20,7 +20,7 @@ const deliveryAddressSlice = createSlice({
 })
 
 export const {
-    get,
+    getUserData,
     clear
 } = deliveryAddressSlice.actions;
 
@@ -36,7 +36,7 @@ export function getDeliveryAddress (user) {
         const snapshot = await ref.get();
 
         if(snapshot.exists) {
-            dispatch(get(snapshot.data()));
+            dispatch(getUserData(snapshot.data()));
         }
     }
 }
