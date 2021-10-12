@@ -31,7 +31,7 @@ export default function LoginScreen({navigation}) {
         .signInWithEmailAndPassword(email,password)
         .then((user) => {
             dispatch(gettingUser(user.user))
-            showToastWithGravityAndOffset("logined successfully");
+            showToastWithGravityAndOffset("You logged in successfully");
         })
         .catch((error) => {
             if(error.code == 'auth/user-not-found') {
@@ -76,13 +76,29 @@ export default function LoginScreen({navigation}) {
                     <Button onPress={() => navigation.navigate('PhoneLogin')}>Login With Mobile</Button>
                 </View>
                 <View style={styles.registerContainer}>
-                    <Text style={styles.text}>Not registered ?</Text>
-                    <TouchableOpacity
+                    <Button  
+                        mode="contained" 
+                        labelStyle={{ color:"#fff" }}
                         onPress={() => navigation.navigate('Register')}
                     >
-                        <Text style={styles.textSignUp}>Register Here</Text>
-                    </TouchableOpacity>
+                        New User
+                    </Button>
                 </View>
+                <View style={{ marginTop:44 }}>
+                    <Button
+                        onPress={() => navigation.navigate('ChangePassword')}
+                    >
+                        Forgot Password
+                    </Button>
+                    <View
+                        style={{
+                                borderBottomColor: '#37c4ad',
+                                borderBottomWidth: 1,
+                                marginLeft:110,
+                                marginRight:110
+                            }}
+                        />
+                    </View>
             </View>
         </View>
     );

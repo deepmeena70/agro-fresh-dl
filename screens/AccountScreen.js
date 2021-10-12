@@ -94,20 +94,7 @@ export default function AccountScreen({navigation}) {
                     />
                     <Text style={styles.rowText}>{userData?userData.email:''}</Text>
                 </View>
-                <View style={styles.row}>
-                    <View style={{ flex:.1 }}>
-                        <MaterialCommunityIcons 
-                            name="lock"
-                            size={28}
-                            color="grey"
-                        />
-                    </View>
-                    <View style={{ flex:.7 }}>
-                        <Pressable onPress={() => navigation.navigate('ChangePassword')}>
-                            <Text style={{ color:"#37C7AD", marginLeft:14 }}>Update Password</Text>
-                        </Pressable>
-                    </View>
-                </View>
+              
                 <View style={styles.rowAddress}>
                     <MaterialCommunityIcons 
                         name="map-marker"

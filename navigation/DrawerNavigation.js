@@ -85,7 +85,6 @@ export default function DrawerNavigation() {
                     <Drawer.Screen name="UpiOptions" component={UpiOptions} />
                     <Drawer.Screen name="CardOptions" component={CardOptions} />
                     <Drawer.Screen name="EditProfile" component={EditProfileScreen} />
-                    <Drawer.Screen name="ChangePassword" component={ChangePassword} />
                     <Drawer.Screen name="OrderDetails" component={OrderDetails} />
                 </>
             :
@@ -93,6 +92,7 @@ export default function DrawerNavigation() {
                     <Drawer.Screen name="Login" component={LoginScreen} />
                     <Drawer.Screen name="PhoneLogin" component={LoginWithPhone} />
                     <Drawer.Screen name="Register" component={RegistrationScreen} />
+                    <Drawer.Screen name="ChangePassword" component={ChangePassword} />
                 </>
             }
 
