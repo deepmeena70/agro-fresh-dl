@@ -16,12 +16,12 @@ export default function VegetablesScreen({route, navigation}) {
     const {items} = useSelector(cartSelector);
 
     useEffect(() => {
-        dispatch(vegetableClear())
-       if(route.name === 'Vegetables') 
-            dispatch(fetchRegVeg())
-        else 
-            dispatch(fetchRegVeg('bulk'))
-    },[dispatch]);
+        dispatch(fetchRegVeg())
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchRegVeg('bulk'))
+    }, [dispatch,route.name ]);
 
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();

@@ -53,40 +53,44 @@ export function fetchRegExotic(orderType){
         dispatch(clear())
         dispatch(loading())
 
-        const productsRef = firestore()
+        try{
+            const productsRef = firestore()
             .collection('products')
         
-        let snapshot;
-        
-        if(orderType === 'bulk') {
-            snapshot = await productsRef
-                .where('bulk', '==', true)
-                .where('exotic', '==', true)
-                .limit(5)
-                .get();
-
-        } else {
-             snapshot = await productsRef
-                    .where('regular', '==', true)
+            let snapshot;
+            
+            if(orderType === 'bulk') {
+                snapshot = await productsRef
+                    .where('bulk', '==', true)
                     .where('exotic', '==', true)
                     .limit(5)
                     .get();
-        }
 
-        if(snapshot.empty){
-            console.log('products not found')
-            dispatch(failed());
-            return;
-        }
+            } else {
+                snapshot = await productsRef
+                        .where('regular', '==', true)
+                        .where('exotic', '==', true)
+                        .limit(5)
+                        .get();
+            }
 
-        if(orderType === 'bulk') {
-            snapshot.forEach(doc => {
-                dispatch(getBulk(doc.data()));
-            })
-        } else {
-            snapshot.forEach(doc => {
-                dispatch(get(doc.data()));
-            })
+            if(snapshot.empty){
+                console.log('products not found')
+                dispatch(failed());
+                return;
+            }
+
+            if(orderType === 'bulk') {
+                snapshot.forEach(doc => {
+                    dispatch(getBulk(doc.data()));
+                })
+            } else {
+                snapshot.forEach(doc => {
+                    dispatch(get(doc.data()));
+                })
+            }
+        } catch (e) {
+            console.log(e);
         }
       
     }

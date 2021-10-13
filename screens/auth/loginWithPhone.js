@@ -4,6 +4,7 @@ import {TextInput, Button} from 'react-native-paper';
 import auth from '@react-native-firebase/auth'
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user';
+import SecondaryHeader from '../../components/SecondaryHeader'
 
 const showToastWithGravityAndOffset = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
@@ -59,35 +60,38 @@ export default function LoginWithPhone({navigation}) {
     }
 
     return (
-        <View style={styles.container}>
-            <View>
+        <View style={{ flex:1 }}>
+            <SecondaryHeader navigation={navigation} screenName="Phone Login"/>
+            <View style={styles.container}>
+                <View>
+                    <TextInput 
+                        label="Mobile Number"
+                        onChangeText={text => setPhoneNumber(text)}
+                        mode="outlined"
+                        keyboardType="numeric"
+                    />
+                    <Button
+                        style={styles.sendCodeBtn}
+                        onPress={sendCodeHandler}
+                    >
+                        Send code
+                    </Button>
+                </View>
                 <TextInput 
-                    label="Mobile Number"
-                    onChangeText={text => setPhoneNumber(text)}
+                    label="Enter OTP"
+                    onChangeText={text => setCode(text)}
                     mode="outlined"
                     keyboardType="numeric"
                 />
-                <Button
-                    style={styles.sendCodeBtn}
-                    onPress={sendCodeHandler}
+                <Button 
+                    mode="contained"
+                    style={{ marginTop:8 }}
+                    labelStyle={{ color:'#fff' }}
+                    onPress={loginHandler}
                 >
-                    Send code
+                    Login
                 </Button>
             </View>
-            <TextInput 
-                label="Enter OTP"
-                onChangeText={text => setCode(text)}
-                mode="outlined"
-                keyboardType="numeric"
-            />
-            <Button 
-                mode="contained"
-                style={{ marginTop:8 }}
-                labelStyle={{ color:'#fff' }}
-                onPress={loginHandler}
-            >
-                Login
-            </Button>
         </View>
     )
 }
@@ -95,8 +99,8 @@ export default function LoginWithPhone({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        padding:12
+        padding:12,
+        marginTop:24
     },
     sendCodeBtn:{
         position: 'absolute',

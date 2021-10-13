@@ -6,6 +6,8 @@ import auth from '@react-native-firebase/auth'
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user'
 
+import SecondaryHeader from '../../components/SecondaryHeader'
+
 const showToastWithGravityAndOffset = (msg) => {
   ToastAndroid.showWithGravityAndOffset(
     msg,
@@ -112,6 +114,8 @@ export default function LoginScreen({navigation}) {
 
     
   return (
+    <View style={{ flex:1 }}>
+      <SecondaryHeader navigation={navigation} screenName="Register" />
       <ScrollView>
         <View style={styles.container}>
             <View style={styles.loginContainer}>
@@ -185,6 +189,8 @@ export default function LoginScreen({navigation}) {
             </View>
         </View>
       </ScrollView>
+    </View>
+ 
   );
 };
 

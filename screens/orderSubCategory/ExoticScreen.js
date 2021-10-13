@@ -18,12 +18,12 @@ export default function ExoticScreen({route, navigation}) {
     console.log('exotic Bulk=>',exoticBulk);
 
     useEffect(() => {
-        dispatch(exoticClear())
-       if(route.name === 'Exotic') 
-            dispatch(fetchRegExotic())
-        else 
-            dispatch(fetchRegExotic('bulk'))
-    },[dispatch]);
+        dispatch(fetchRegExotic());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchRegExotic('bulk'));
+    }, [dispatch, route.name]);
 
     function open() {
     pickerRef.current.focus();
@@ -42,9 +42,9 @@ export default function ExoticScreen({route, navigation}) {
 
     return (
         <ScrollView style={styles.container}>
-        {products().map(product => 
+        {products().map((product, key) => 
 
-            <View style={styles.card}>
+            <View key={key} style={styles.card}>
                 <View style={styles.productContainer}>
                     <Image 
                         source={{ uri:product.imageURL }}

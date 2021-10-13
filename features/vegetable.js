@@ -53,40 +53,44 @@ export function fetchRegVeg(orderType){
         dispatch(clear());
         dispatch(loading())
 
-        const productsRef = firestore()
-                            .collection('products')
+        try{
+            const productsRef = firestore()
+            .collection('products')
 
-        let snapshot;
-        
-        if(orderType === 'bulk') {
+            let snapshot;
+
+            if(orderType === 'bulk') {
             snapshot = await productsRef
-                .where('bulk', '==', true)
+            .where('bulk', '==', true)
+            .where('vegetable', '==', true)
+            .limit(5)
+            .get();
+
+            } else {
+            snapshot = await productsRef
+                .where('regular', '==', true)
                 .where('vegetable', '==', true)
                 .limit(5)
                 .get();
+            }
 
-        } else {
-             snapshot = await productsRef
-                    .where('regular', '==', true)
-                    .where('vegetable', '==', true)
-                    .limit(5)
-                    .get();
-        }
-
-        if(snapshot.empty){
+            if(snapshot.empty){
             console.log('products not found')
             dispatch(failed());
             return;
-        }
+            }
 
-        if(orderType === 'bulk') {
+            if(orderType === 'bulk') {
             snapshot.forEach(doc => {
-                dispatch(getBulk(doc.data()));
+            dispatch(getBulk(doc.data()));
             })
-        } else {
+            } else {
             snapshot.forEach(doc => {
-                dispatch(get(doc.data()));
+            dispatch(get(doc.data()));
             })
+            }
+        } catch (e) {
+            console.error(e);
         }
       
     }

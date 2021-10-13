@@ -4,6 +4,7 @@ import { TextInput, Button, Text } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux'
 import {gettingUser} from '../../features/user';
+import SecondaryHeader from '../../components/SecondaryHeader'
 
 const showToastWithGravityAndOffset = (msg) => {
     ToastAndroid.showWithGravityAndOffset(
@@ -49,12 +50,14 @@ export default function LoginScreen({navigation}) {
 
     return (
         <View style={styles.container}>
+            <SecondaryHeader navigation={navigation} screenName="Login" />
             <View style={styles.loginContainer}>
                 <TextInput
                     label="Email"
                     onChangeText={text => setEmail(text)}
                     value={email}
                     style={ styles.textInput}
+                    mode="outlined"
                 />
                 <TextInput
                     label="password"
@@ -62,6 +65,9 @@ export default function LoginScreen({navigation}) {
                     onChangeText={text => setPassword(text)}
                     value={password}
                     style={ styles.textInput}
+                    mode="outlined"
+                    secureTextEntry={true}
+                    placeholder="********"
                 />
                 <Button 
                     mode="contained" 
@@ -111,8 +117,8 @@ const styles = StyleSheet.create({
     },
     loginContainer:{
         flex:1,
-        justifyContent: 'center',
-        padding:12
+        padding:12,
+        marginTop:12
     },
     textInput:{
         marginTop:12

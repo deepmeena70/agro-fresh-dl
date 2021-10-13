@@ -14,12 +14,12 @@ export default function FruitsScreen({route, navigation}) {
     const {fruit, fruitBulk, loadFruit, errorFruit} = useSelector(fruitSelector);
 
     useEffect(() => {
-        dispatch(fruitClear())
-       if(route.name === 'Fruits') 
-            dispatch(fetchRegFruit())
-        else 
-            dispatch(fetchRegFruit('bulk'))
-    },[dispatch]);
+        dispatch(fetchRegFruit());
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchRegFruit('bulk'))
+    }, [dispatch, route.name]);
 
 
     function open() {
@@ -39,9 +39,9 @@ export default function FruitsScreen({route, navigation}) {
     
     return (
         <ScrollView style={styles.container}>
-             {products().map(product => 
+             {products().map((product, key) => 
 
-                <View style={styles.card}>
+                <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>
                         <Image 
                             source={{ uri:product.imageURL }}
