@@ -72,7 +72,7 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="FreshBasket" component={FreshBasketScreen} />
             <Drawer.Screen name="Location" component={LocationScreen} />
             {signIn ? 
-                 <>
+                <>
                     <Drawer.Screen name="MyOrders" component={MyOrdersScreen} />
                     <Drawer.Screen name="Account" component={AccountScreen} />
                     <Drawer.Screen name="ReferAndEarn" component={ReferAndEarnScreen} />

@@ -11,7 +11,6 @@ public class BasePackageList {
         new expo.modules.constants.ConstantsPackage(),
         new expo.modules.errorrecovery.ErrorRecoveryPackage(),
         new expo.modules.filesystem.FileSystemPackage(),
-        new expo.modules.firebase.core.FirebaseCorePackage(),
         new expo.modules.font.FontLoaderPackage(),
         new expo.modules.imageloader.ImageLoaderPackage(),
         new expo.modules.keepawake.KeepAwakePackage(),
