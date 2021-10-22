@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {fetchRegVeg, vegetableSelector, fetchRegVegOnScroll} from '../../features/vegetable';
+import {fetchBlkVeg, vegetableBlkSelector, fetchBlkVegOnScroll} from '../../features/vegetableBulk';
 import {addToCart, cartSelector} from '../../features/cart';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -11,25 +11,16 @@ export default function VegetablesBulkScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetable, vegetableBulk, loadVegetable, errorVegetable, last, lastBulk} = useSelector(vegetableSelector);
+    const {vegetableBulk, loadBlkVegetable, errorBlkVegetable, lastBulk} = useSelector(vegetableBlkSelector);
 
     const {items} = useSelector(cartSelector);
 
     const [selectedValue, setSelectedValue] = useState();
     const pickerRef = useRef();
 
-    const products = () => {
-        if(route.name == 'VegetablesBulk') {
-            return vegetableBulk;
-        }
-        return vegetable;
-    }
-
     useEffect(() => {
-        dispatch(fetchRegVeg("bulk"))
+        dispatch(fetchBlkVeg())
     },[dispatch, route.name]);
-
-
 
     console.log("route name and route params >>>",route, route.name)
 
@@ -46,7 +37,7 @@ export default function VegetablesBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                return dispatch(fetchRegVegOnScroll('bulk', lastBulk));
+                return dispatch(fetchBlkVegOnScroll(lastBulk));
             }
           }}
           scrollEventThrottle={300} 

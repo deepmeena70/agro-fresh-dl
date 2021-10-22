@@ -11,22 +11,15 @@ export default function VegetablesScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetable, vegetableBulk, loadVegetable, errorVegetable, last, lastBulk} = useSelector(vegetableSelector);
+    const {vegetable, loadVegetable, errorVegetable, last} = useSelector(vegetableSelector);
 
     const {items} = useSelector(cartSelector);
 
     const [selectedValue, setSelectedValue] = useState();
     const pickerRef = useRef();
 
-    const products = () => {
-        if(route.name == 'VegetablesBulk') {
-            return vegetableBulk;
-        }
-        return vegetable;
-    }
-
     useEffect(() => {
-        dispatch(fetchRegVeg("regular"))
+        dispatch(fetchRegVeg())
     },[dispatch, route.name]);
 
     console.log("route name and route params >>>",route, route.name)
@@ -44,7 +37,7 @@ export default function VegetablesScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchRegVegOnScroll('regular', last));
+                dispatch(fetchRegVegOnScroll(last));
             }
           }}
           scrollEventThrottle={300} 

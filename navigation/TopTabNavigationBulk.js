@@ -19,9 +19,10 @@ export default function TopTabNavigationBulk() {
         <Tab.Navigator 
         screenOptions={screenOptions}
         >
-            <Tab.Screen name="VegetablesBulk"  component={VegetablesBulkScreen} />
-            <Tab.Screen name="FruitsBulk" component={FruitsBulkScreen}  />
-            <Tab.Screen name="ExoticBulk" component={ExoticBulkScreen}  />
+            <Tab.Screen name="VegetablesBulk"  
+                component={VegetablesBulkScreen} options={{ tabBarLabel:'Vegetables' }}/>
+            <Tab.Screen name="FruitsBulk" component={FruitsBulkScreen} options={{ tabBarLabel:'Fruits' }}  />
+            <Tab.Screen name="ExoticBulk" component={ExoticBulkScreen} options={{ tabBarLabel:'Exotic' }} />
         </Tab.Navigator>
            
     )

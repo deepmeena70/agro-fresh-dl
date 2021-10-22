@@ -20,10 +20,11 @@ export default function TopTabNavigation(props) {
         <Tab.Navigator 
         screenOptions={screenOptions}
         >
-            <Tab.Screen name="Vegetables" component={VegetablesScreen} />
+            <Tab.Screen name="Vegetables" component={VegetablesScreen} title="Vegetables" />
             <Tab.Screen name="Fruits" component={FruitsScreen}  />
             <Tab.Screen name="Exotic" component={ExoticScreen}  />
         </Tab.Navigator>
 
     )
 }
+ 

@@ -3,29 +3,29 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
 export const initialState = {
-  vegetable: [],
-  loadVegetable: false,
-  errorVegetable: false,
-  last: null,
+  vegetableBulk: [],
+  loadVegetableBulk: false,
+  errorVegetableBulk: false,
+  lastBulk: null,
 }
 
-const vegetableSlice = createSlice({
-    name: 'vegetable',
+const vegetableBlkSlice = createSlice({
+    name: 'vegetableBulk',
     initialState,
     reducers: {
         loading: (state) =>{
-            state.loadVegetable = true;
+            state.loadVegetableBulk = true;
         },
-        get: (state, action) => {
-            state.loadVegetable = false;
-            state.vegetable.push(action.payload);
+        getBulk: (state, action) => {
+            state.loadVegetableBulk = false;
+            state.vegetableBulk.push(action.payload);
         },
         failed: (state) => {
-            state.loadVegetable = false;
-            state.errorVegetable = true;
+            state.loadVegetableBulk = false;
+            state.errorVegetableBulk = true;
         },
-        getLast: (state, action) => {
-            state.last = action.payload; 
+        getLastBulk: (state, action) => {
+            state.lastBulk = action.payload;
         },
         clear: (state) => {
             Object.assign(state, initialState);
@@ -36,23 +36,22 @@ const vegetableSlice = createSlice({
 
 export const {
     loading, 
-    get,
+    getBulk, 
+    getLastBulk,
     failed,
-    getLast,
     clear
-} = vegetableSlice.actions;
+} = vegetableBlkSlice.actions;
 
-export const vegetableSelector = state => state.vegetable;
+export const vegetableBlkSelector = state => state.vegetableBulk;
 
-export default vegetableSlice.reducer;
+export default vegetableBlkSlice.reducer;
 
-
-export function fetchRegVeg(){
+export function fetchBlkVeg(){
     return async (dispatch) => {
         dispatch(clear());
         dispatch(loading())
 
-        console.log('order type from vegetables >>>',"regular")
+        console.log('order type from vegetables >>>',"bulk")
 
         try{
             const productsRef = firestore()
@@ -60,7 +59,7 @@ export function fetchRegVeg(){
 
             const first = productsRef
             .orderBy('productName')
-            .where("regular", '==', true)
+            .where("bulk", '==', true)
             .where('vegetable', '==', true)
             .limit(5);    
 
@@ -69,14 +68,15 @@ export function fetchRegVeg(){
             
             const last = snapshot.docs[snapshot.docs.length - 1];
 
-            dispatch(getLast(last));
+
+            dispatch(getLastBulk(last))
 
             snapshot.forEach(doc => {
-                dispatch(get(doc.data()));
+                dispatch(getBulk(doc.data()));
             })
 
             if(snapshot.empty){
-                console.log("vegetables >>>",'products not found in regular')
+                console.log("vegetables >>>",'products not found in bulk')
                 dispatch(failed());
                 return;
             }
@@ -88,7 +88,7 @@ export function fetchRegVeg(){
     }
 }
 
-export function fetchRegVegOnScroll(last) {
+export function fetchBlkVegOnScroll(last) {
 
     return async (dispatch) => {
 
@@ -99,11 +99,11 @@ export function fetchRegVegOnScroll(last) {
         const productsRef = firestore()
             .collection('products')
 
-        console.log("orderType >>>","regular")
+        console.log("orderType >>>","bulk")
 
         const next = productsRef
         .orderBy('productName')
-        .where("regular", '==', true)
+        .where("bulk", '==', true)
         .where('vegetable', '==', true)
         .startAfter(last.data().productName)
         .limit(5);
@@ -119,12 +119,11 @@ export function fetchRegVegOnScroll(last) {
                 dispatch(failed());
             } else {
                 snapshot.forEach(doc => {
-                    dispatch(get(doc.data()));
+                    dispatch(getBulk(doc.data()));
                 })
             }
-          
-            dispatch(getLast(lastQuery));
-            
+
+            dispatch(getLastBulk(lastQuery))
         
         } catch(e) {
             console.error(e);
@@ -134,7 +133,7 @@ export function fetchRegVegOnScroll(last) {
 
 }
 
-export function vegetableRegClear() {
+export function vegetableBlkClear() {
     return async (dispatch) => {
             auth()
             .signOut()

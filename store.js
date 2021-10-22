@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './features/user'
 import userDataReducer from './features/userData'
 import vegetableReducer from './features/vegetable'
+import vegetableBlkReducer from './features/vegetableBulk'
 import fruitReducer from './features/fruit'
 import exoticReducer from './features/exotic'
 import offersReducer from './features/offers'
@@ -18,6 +19,7 @@ const store = configureStore({
     user: userReducer,
     userData: userDataReducer,
     vegetable: vegetableReducer,
+    vegetableBulk: vegetableBlkReducer,
     fruit: fruitReducer,
     exotic: exoticReducer,
     cart: cartReducer,
