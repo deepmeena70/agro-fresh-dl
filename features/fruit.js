@@ -7,7 +7,6 @@ export const initialState = {
   fruitBulk: [],
   loadFruit: false,
   errorFruit: false,
-  last:null
 }
 
 const fruitSlice = createSlice({
@@ -25,9 +24,6 @@ const fruitSlice = createSlice({
             state.loadFruit = false;
             state.fruitBulk.push(action.payload);
         },
-        getLast: (state, action) => {
-            state.last = action.payload; 
-        },
         failed: (state) => {
             state.loadFruit = false;
             state.errorFruit = true;
@@ -44,7 +40,6 @@ export const {
     get,
     getBulk, 
     failed,
-    getLast,
     clear
 } = fruitSlice.actions;
 
@@ -99,49 +94,6 @@ export function fetchRegFruit(orderType){
         }
 
     }
-}
-
-export function fetchRegFruitOnScroll(orderType, last) {
-
-
-    return async (dispatch) => {
-
-        if(last === null || last === undefined) {
-            return;
-        }
-
-        const productsRef = firestore()
-            .collection('products')
-
-        const next = productsRef
-        .orderBy('productName')
-        .where('regular', '==', true)
-        .where('vegetable', '==', true)
-        .startAfter(last.data().productName)
-        .limit(5);
-
-        try{
-            const snapshot = await next.get()
-            .catch(err => console.error(err.message));
-
-            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
-
-            if(snapshot.empty) {
-                console.log("collection is empty");
-                dispatch(failed());
-            } else {
-                snapshot.forEach(doc => {
-                    dispatch(get(doc.data()));
-                })
-            }
-        
-            dispatch(getLast(lastQuery));
-        } catch(e) {
-            console.error(e);
-        }
-
-    }
-
 }
 
 export function fruitClear() {

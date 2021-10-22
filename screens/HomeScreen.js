@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }) {
                     <View style={styles.row}>
                     <Pressable
                         styles={{ flex:1 }}
-                        onPress={() => {navigation.navigate('OrderCategory', 'regular')}}
+                        onPress={() => {navigation.navigate('OrderCategory')}}
                     >
                         <View style={styles.items}>
                         <Image

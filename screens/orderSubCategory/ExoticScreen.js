@@ -1,10 +1,10 @@
 import React, {useState,useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { exoticSelector, exoticClear, fetchRegExotic, fetchRegExoticOnScroll } from '../../features/exotic';
+import { exoticSelector, exoticClear, fetchRegExotic } from '../../features/exotic';
 
 export default function ExoticScreen({route, navigation}) {
 
@@ -12,7 +12,7 @@ export default function ExoticScreen({route, navigation}) {
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {exotic, exoticBulk, loadExotic, errorExotic,last} = useSelector(exoticSelector);
+    const {exotic, exoticBulk, loadExotic, errorExotic} = useSelector(exoticSelector);
 
     console.log('exotic=>',exotic)
     console.log('exotic Bulk=>',exoticBulk);
@@ -21,6 +21,9 @@ export default function ExoticScreen({route, navigation}) {
         dispatch(fetchRegExotic());
     }, [dispatch]);
 
+    useEffect(() => {
+        dispatch(fetchRegExotic('bulk'));
+    }, [dispatch, route.name]);
 
     function open() {
     pickerRef.current.focus();
@@ -30,36 +33,23 @@ export default function ExoticScreen({route, navigation}) {
     pickerRef.current.blur();
     }
 
+    const products = () => {
+        if(route.name == 'ExoticBulk') {
+            return exoticBulk;
+        }
+        return exotic;
+    }
 
     return (
-        <ScrollView style={styles.container}
-        onScroll={e => { 
-            const maxOffset = Math.round(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height);
-            const yOffset = Math.round(e.nativeEvent.contentOffset.y)
-            if(yOffset >= maxOffset) {
-                console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Exotic bulk screen")
-                } 
-                dispatch(fetchRegExoticOnScroll('regular', last));
-            }
-          }}
-          scrollEventThrottle={300} 
-        >
-        {exotic.map((product, key) => 
+        <ScrollView style={styles.container}>
+        {products().map((product, key) => 
 
             <View key={key} style={styles.card}>
                 <View style={styles.productContainer}>
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("ProductDetails", {
-                            item:product
-                        })}
-                    >
-                        <Image 
-                            source={{ uri:product.imageURL }}
-                            style={ styles.thumbnail }
-                        />
-                    </TouchableOpacity>
+                    <Image 
+                        source={{ uri:product.imageURL }}
+                        style={ styles.thumbnail }
+                    />
                     <View style={styles.productDescription}>
                         <Text style={ styles.prodTitle }>{product.productName}</Text>
                         <View style={ styles.priceContainer }>

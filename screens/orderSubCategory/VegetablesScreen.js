@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {fetchRegVeg, vegetableSelector, fetchRegVegOnScroll} from '../../features/vegetable';
+import {fetchRegVeg, vegetableClear, vegetableSelector} from '../../features/vegetable';
 import {addToCart, cartSelector} from '../../features/cart';
 import {useSelector, useDispatch} from 'react-redux';
 
@@ -11,11 +11,19 @@ export default function VegetablesScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetable, vegetableBulk, loadVegetable, errorVegetable, last, lastBulk} = useSelector(vegetableSelector);
+    const {vegetable, vegetableBulk, loadVegetable, errorVegetable} = useSelector(vegetableSelector);
 
     const {items} = useSelector(cartSelector);
 
-    const [selectedValue, setSelectedValue] = useState();
+    useEffect(() => {
+        dispatch(fetchRegVeg())
+    }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchRegVeg('bulk'))
+    }, [dispatch,route.name ]);
+
+    const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const products = () => {
@@ -25,45 +33,23 @@ export default function VegetablesScreen({route, navigation}) {
         return vegetable;
     }
 
-    useEffect(() => {
-        dispatch(fetchRegVeg("regular"))
-    },[dispatch, route.name]);
-
-    console.log("route name and route params >>>",route, route.name)
-
     const handleBuy = (item) => {
         console.log('item name =>',item.productName);
         dispatch(addToCart(item, selectedValue));
         console.log(items);
     }
 
-
     return ( 
-        <ScrollView onScroll={e => { 
-            const maxOffset = Math.round(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height);
-            const yOffset = Math.round(e.nativeEvent.contentOffset.y)
-            if(yOffset >= maxOffset) {
-                console.log("scrolled")
-                dispatch(fetchRegVegOnScroll('regular', last));
-            }
-          }}
-          scrollEventThrottle={300} 
-          style={styles.container}>
+        <ScrollView style={styles.container}>
             {
-                vegetable.map((product, key) => 
+                products().map((product, key) => 
 
                     <View style={styles.card} key={key}>
                         <View style={styles.productContainer}>
-                            <TouchableOpacity onPress={() => {
-                                navigation.navigate("ProductDetails", {
-                                    item:product
-                                })
-                            }}>
-                                <Image 
-                                    source={{ uri:product.imageURL }}
-                                    style={ styles.thumbnail }
-                                />
-                            </TouchableOpacity>
+                            <Image 
+                                source={{ uri:product.imageURL }}
+                                style={ styles.thumbnail }
+                            />
                             <View style={styles.productDescription}>
                                 <Text style={ styles.prodTitle }>{product.productName}</Text>
                                 <View style={ styles.priceContainer }>

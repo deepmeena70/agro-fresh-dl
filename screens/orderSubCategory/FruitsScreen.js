@@ -1,21 +1,26 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {fruitSelector, fruitClear, fetchRegFruit, fetchRegFruitOnScroll} from '../../features/fruit';
+import {fruitSelector, fruitClear, fetchRegFruit} from '../../features/fruit';
 
 export default function FruitsScreen({route, navigation}) {
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {fruit, fruitBulk, loadFruit, errorFruit, last} = useSelector(fruitSelector);
+    const {fruit, fruitBulk, loadFruit, errorFruit} = useSelector(fruitSelector);
 
     useEffect(() => {
         dispatch(fetchRegFruit());
     }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchRegFruit('bulk'))
+    }, [dispatch, route.name]);
+
 
     function open() {
     pickerRef.current.focus();
@@ -24,35 +29,24 @@ export default function FruitsScreen({route, navigation}) {
     function close() {
     pickerRef.current.blur();
     }
+
+    const products = () => {
+        if(route.name == 'FruitsBulk') {
+            return fruitBulk;
+        }
+        return fruit;
+    }
     
     return (
-        <ScrollView style={styles.container}
-        onScroll={e => { 
-            const maxOffset = Math.round(e.nativeEvent.contentSize.height - e.nativeEvent.layoutMeasurement.height);
-            const yOffset = Math.round(e.nativeEvent.contentOffset.y)
-            if(yOffset >= maxOffset) {
-                console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Fruit bulk screen")
-                } 
-                dispatch(fetchRegFruitOnScroll('regular', last));
-            }
-          }}
-          scrollEventThrottle={300} 
-
-        >
-             {fruit.map((product, key) => 
+        <ScrollView style={styles.container}>
+             {products().map((product, key) => 
 
                 <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("ProductDetaisl",{item:product})}
-                        >
-                            <Image 
-                                source={{ uri:product.imageURL }}
-                                style={ styles.thumbnail }
-                            />
-                        </TouchableOpacity>
+                        <Image 
+                            source={{ uri:product.imageURL }}
+                            style={ styles.thumbnail }
+                        />
                         <View style={styles.productDescription}>
                             <Text style={ styles.prodTitle }>{product.productName}</Text>
                             <View style={ styles.priceContainer }>
