@@ -6,7 +6,7 @@ import { Button } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { exoticSelector, exoticClear, fetchRegExotic, fetchRegExoticOnScroll } from '../../features/exotic';
 
-export default function ExoticScreen({route, navigation}) {
+export default function ExoticBulkScreen({route, navigation}) {
 
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
@@ -18,9 +18,8 @@ export default function ExoticScreen({route, navigation}) {
     console.log('exotic Bulk=>',exoticBulk);
 
     useEffect(() => {
-        dispatch(fetchRegExotic());
-    }, [dispatch]);
-
+        dispatch(fetchRegExotic('bulk'));
+    }, [dispatch, route.name]);
 
     function open() {
     pickerRef.current.focus();
@@ -29,7 +28,6 @@ export default function ExoticScreen({route, navigation}) {
     function close() {
     pickerRef.current.blur();
     }
-
 
     return (
         <ScrollView style={styles.container}
@@ -46,7 +44,7 @@ export default function ExoticScreen({route, navigation}) {
           }}
           scrollEventThrottle={300} 
         >
-        {exotic.map((product, key) => 
+        {exoticBulk.map((product, key) => 
 
             <View key={key} style={styles.card}>
                 <View style={styles.productContainer}>

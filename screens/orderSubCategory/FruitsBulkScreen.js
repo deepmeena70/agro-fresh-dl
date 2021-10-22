@@ -6,16 +6,18 @@ import { Button } from 'react-native-paper';
 import {useSelector, useDispatch} from 'react-redux';
 import {fruitSelector, fruitClear, fetchRegFruit, fetchRegFruitOnScroll} from '../../features/fruit';
 
-export default function FruitsScreen({route, navigation}) {
+export default function FruitsBulkScreen({route, navigation}) {
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
     const {fruit, fruitBulk, loadFruit, errorFruit, last} = useSelector(fruitSelector);
 
+
     useEffect(() => {
-        dispatch(fetchRegFruit());
-    }, [dispatch]);
+        dispatch(fetchRegFruit('bulk'))
+    }, [dispatch, route.name]);
+
 
     function open() {
     pickerRef.current.focus();
@@ -41,7 +43,7 @@ export default function FruitsScreen({route, navigation}) {
           scrollEventThrottle={300} 
 
         >
-             {fruit.map((product, key) => 
+             {fruitBulk.map((product, key) => 
 
                 <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>

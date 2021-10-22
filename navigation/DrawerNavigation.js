@@ -30,10 +30,11 @@ import EditProfileScreen from '../screens/EditProfileScreen'
 import ChangePassword from '../screens/auth/ChangePassword';
 import LoginWithPhone from '../screens/auth/LoginWithPhone';
 import OrderDetails from '../screens/OrderDetails';
-
+import ProductSearchScreen from '../screens/ProductSearchScreen'
 // components
 import Loading from '../components/Loading'
 import Errors from '../components/Errors'
+import ProductDetailsScreen from './../screens/ProductDetailsScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -71,6 +72,8 @@ export default function DrawerNavigation() {
             <Drawer.Screen name="OrderCategory" component={OrderCategoryScreen} />
             <Drawer.Screen name="FreshBasket" component={FreshBasketScreen} />
             <Drawer.Screen name="Location" component={LocationScreen} />
+            <Drawer.Screen name="ProductSearch" component={ProductSearchScreen} />
+            <Drawer.Screen name="ProductDetails" component={ProductDetailsScreen} />
             {signIn ? 
                  <>
                     <Drawer.Screen name="MyOrders" component={MyOrdersScreen} />

@@ -7,7 +7,7 @@ import {fetchRegVeg, vegetableSelector, fetchRegVegOnScroll} from '../../feature
 import {addToCart, cartSelector} from '../../features/cart';
 import {useSelector, useDispatch} from 'react-redux';
 
-export default function VegetablesScreen({route, navigation}) {
+export default function VegetablesBulkScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
@@ -26,8 +26,10 @@ export default function VegetablesScreen({route, navigation}) {
     }
 
     useEffect(() => {
-        dispatch(fetchRegVeg("regular"))
+        dispatch(fetchRegVeg("bulk"))
     },[dispatch, route.name]);
+
+
 
     console.log("route name and route params >>>",route, route.name)
 
@@ -44,13 +46,13 @@ export default function VegetablesScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchRegVegOnScroll('regular', last));
+                return dispatch(fetchRegVegOnScroll('bulk', lastBulk));
             }
           }}
           scrollEventThrottle={300} 
           style={styles.container}>
             {
-                vegetable.map((product, key) => 
+                vegetableBulk.map((product, key) => 
 
                     <View style={styles.card} key={key}>
                         <View style={styles.productContainer}>

@@ -1,31 +1,39 @@
 {
-    "project_info": {
-        "project_number": "186433974952",
-        "project_id": "agrofresh-dl",
-        "storage_bucket": "agrofresh-dl.appspot.com"
-    },
-    "client": [{
-        "client_info": {
-            "mobilesdk_app_id": "1:186433974952:android:375faf4e2fdfc1c57dc89d",
-            "android_client_info": {
-                "package_name": "com.deep.expo.agrofreshdl"
-            }
-        },
-        "oauth_client": [{
-            "client_id": "186433974952-3cb5hcg7r35n8um6abpqjg509cc5vqs1.apps.googleusercontent.com",
-            "client_type": 3
-        }],
-        "api_key": [{
-            "current_key": "AIzaSyB_EeFigxPa2gTcMgC51CoAACmW3sQUm1E"
-        }],
-        "services": {
-            "appinvite_service": {
-                "other_platform_oauth_client": [{
-                    "client_id": "186433974952-3cb5hcg7r35n8um6abpqjg509cc5vqs1.apps.googleusercontent.com",
-                    "client_type": 3
-                }]
-            }
+  "project_info": {
+    "project_number": "614318304032",
+    "project_id": "agro-fresh-dl",
+    "storage_bucket": "agro-fresh-dl.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:614318304032:android:bb0c2010ca829781138545",
+        "android_client_info": {
+          "package_name": "com.deep.expo.agrofreshdl"
         }
-    }],
-    "configuration_version": "1"
+      },
+      "oauth_client": [
+        {
+          "client_id": "614318304032-b1blfq39krj8bdd5lfmrbtcl52httsjq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQ1Cx6X9ezk5UsnpEZ5xFtdI47V6tYRts"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "614318304032-b1blfq39krj8bdd5lfmrbtcl52httsjq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
 }
