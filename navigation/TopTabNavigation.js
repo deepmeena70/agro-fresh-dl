@@ -13,16 +13,17 @@ const screenOptions = {
         tabBarInactiveTintColor:'grey',
 }
 
-export default function TopTabNavigation() {
+export default function TopTabNavigation(props) {
 
     return (
-            <Tab.Navigator 
-            screenOptions={screenOptions}
-            >
-                <Tab.Screen name="Vegetables"  component={VegetablesScreen} />
-                <Tab.Screen name="Fruits" component={FruitsScreen} />
-                <Tab.Screen name="Exotic" component={ExoticScreen} />
-            </Tab.Navigator>
+        
+        <Tab.Navigator 
+        screenOptions={screenOptions}
+        >
+            <Tab.Screen name="Vegetables" component={VegetablesScreen} />
+            <Tab.Screen name="Fruits" component={FruitsScreen}  />
+            <Tab.Screen name="Exotic" component={ExoticScreen}  />
+        </Tab.Navigator>
 
     )
 }
