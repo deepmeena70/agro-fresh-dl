@@ -1,8 +1,8 @@
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import VegetablesScreen from '../screens/orderSubCategory/VegetablesScreen';
-import FruitsScreen from '../screens/orderSubCategory/FruitsScreen';
-import ExoticScreen from '../screens/orderSubCategory/ExoticScreen';
+import VegetablesBulkScreen from '../screens/orderSubCategory/VegetablesBulkScreen';
+import FruitsBulkScreen from '../screens/orderSubCategory/FruitsBulkScreen';
+import ExoticBulkScreen from '../screens/orderSubCategory/ExoticBulkScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -13,19 +13,16 @@ const screenOptions = {
         tabBarInactiveTintColor:'grey',
 }
 
-export default function TopTabNavigationBulk(props) {
-    const {route} = props;
-
-    console.log(route);
+export default function TopTabNavigationBulk() {
 
     return (
-            <Tab.Navigator 
-            screenOptions={screenOptions}
-            >
-                <Tab.Screen name="VegetablesBulk" options={{ title: 'Vegetables' }}  component={VegetablesScreen} />
-                <Tab.Screen name="FruitsBulk" options={{ title: 'Fruits' }} component={FruitsScreen}  />
-                <Tab.Screen name="ExoticBulk" options={{ title: 'Exotic' }} component={ExoticScreen} />
-            </Tab.Navigator>
-
+        <Tab.Navigator 
+        screenOptions={screenOptions}
+        >
+            <Tab.Screen name="VegetablesBulk"  component={VegetablesBulkScreen} />
+            <Tab.Screen name="FruitsBulk" component={FruitsBulkScreen}  />
+            <Tab.Screen name="ExoticBulk" component={ExoticBulkScreen}  />
+        </Tab.Navigator>
+           
     )
 }

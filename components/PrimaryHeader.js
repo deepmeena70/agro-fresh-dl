@@ -116,19 +116,21 @@ export default function PrimaryHeader(props) {
                 </View>
             </View>
 
-            <View style={styles.inputContainer} >
-                <TextInput
-                style={styles.input}
-                placeholder="Search..."
-                />
-                <MaterialCommunityIcons
-                name="magnify"
-                color="#37c7ad" 
-                style={{ marginTop:5, paddingRight:6 }}
-                size={22}
-                />
-                
-            </View>
+               <TouchableOpacity onPress={() => navigation.navigate('ProductSearch')}>
+                <View style={styles.inputContainer} >
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Search..."
+                      editable={false}
+                      />
+                      <MaterialCommunityIcons
+                      name="magnify"
+                      color="#37c7ad" 
+                      style={{ marginTop:5, paddingRight:6 }}
+                      size={22}
+                      />
+                </View>
+                </TouchableOpacity>                
             <Toast visible={visibleToast} message="Not signed in!" />
         </SafeAreaView>
     )
@@ -156,14 +158,13 @@ const styles = StyleSheet.create({
       justifyContent:'flex-end'
     },
     inputContainer:{
-      height:34,
+      height:36,
       borderWidth: 1,
       borderColor:'#37C7AD',
       flexDirection: 'row',
       borderRadius: 7,
     },
     input: {
-      height: 34,
       paddingLeft:20,
       flex:1
     },

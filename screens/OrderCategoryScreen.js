@@ -8,15 +8,20 @@ import TopTabNavigationBulk from '../navigation/TopTabNavigationBulk';
 
 export default function OrderCategoryScreen({route, navigation}) {
 
+    console.log(route)
+
     return (
         <View style={styles.Container}>
             <PrimaryHeader navigation={navigation}/>
             <View style={styles.tabBarContainer}>
-                {route.params !== 'bulk'?
-                    <TopTabNavigation/>
-                    :
-                    <TopTabNavigationBulk route={route}/>
-
+                {
+                    (route.params !== "bulk")?
+                    (
+                        <TopTabNavigation />
+                    ):
+                    (
+                        <TopTabNavigationBulk />
+                    )
                 }
             </View>
         </View>

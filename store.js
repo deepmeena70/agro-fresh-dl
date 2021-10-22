@@ -6,6 +6,7 @@ import vegetableReducer from './features/vegetable'
 import fruitReducer from './features/fruit'
 import exoticReducer from './features/exotic'
 import offersReducer from './features/offers'
+import searchReducer from './features/search'
 
 import cartReducer from './features/cart'
 import cartDetailsReducer from './features/cartDetails'
@@ -24,6 +25,7 @@ const store = configureStore({
     cartDetails: cartDetailsReducer,
     deliveryAddress: deliveryAddressReducer,
     location: locationReducer,
+    search: searchReducer
   },
   middleware: (getDefaultMiddleware) => 
     getDefaultMiddleware({
