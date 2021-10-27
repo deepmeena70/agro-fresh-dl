@@ -1,12 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 
 export const initialState = {
   vegetable: [],
   loadVegetable: false,
   errorVegetable: false,
-  last: null,
+  lastVeg: null,
 }
 
 const vegetableSlice = createSlice({
@@ -25,7 +24,7 @@ const vegetableSlice = createSlice({
             state.errorVegetable = true;
         },
         getLast: (state, action) => {
-            state.last = action.payload; 
+            state.lastVeg = action.payload; 
         },
         clear: (state) => {
             Object.assign(state, initialState);
@@ -57,6 +56,13 @@ export function fetchRegVeg(){
         try{
             const productsRef = firestore()
             .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('vegetable', '==', true).get();
+
+            console.log("vegetable regular length>>>",docLength.docs.length);
 
             const first = productsRef
             .orderBy('productName')
@@ -115,7 +121,7 @@ export function fetchRegVegOnScroll(last) {
             const lastQuery = snapshot.docs[snapshot.docs.length - 1];
 
             if(snapshot.empty) {
-                console.log("collection is empty");
+                console.log("Next collection is empty >>> vegetables");
                 dispatch(failed());
             } else {
                 snapshot.forEach(doc => {
@@ -136,12 +142,7 @@ export function fetchRegVegOnScroll(last) {
 
 export function vegetableRegClear() {
     return async (dispatch) => {
-            auth()
-            .signOut()
-            .then(() => {
-                dispatch(clear())
-            })
-        
+       dispatch(clear());        
     }
 }
 

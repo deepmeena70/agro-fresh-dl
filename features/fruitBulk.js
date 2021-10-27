@@ -1,30 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 export const initialState = {
-  exotic: [],
-  loadExotic: false,
-  errorExotic: false,
-  lastExotic: null
+  fruitBulk: [],
+  loadFruitBulk: false,
+  errorFruitBulk: false,
+  lastFruitBulk:null
 }
 
-const exoticSlice = createSlice({
-    name: 'exotic',
+const fruitBlkSlice = createSlice({
+    name: 'fruitBulk',
     initialState,
     reducers: {
         loading: (state) =>{
-            state.loadExotic = true;
+            state.loadFruitBulk = true;
         },
-        get: (state, action) => {
-            state.loadExotic = false;
-            state.exotic.push(action.payload);
+        getBulk: (state, action) => {
+            state.loadFruitBulk = false;
+            state.fruitBulk.push(action.payload);
         },
         getLast: (state, action) => {
-            state.lastExotic = action.payload; 
+            state.lastFruitBulk = action.payload; 
         },
         failed: (state) => {
-            state.loadExotic = false;
-            state.errorExotic = true;
+            state.loadFruitBulk = false;
+            state.errorFruitBulk = true;
         },
         clear: (state) => {
             Object.assign(state, initialState);
@@ -35,53 +36,63 @@ const exoticSlice = createSlice({
 
 export const {
     loading, 
-    get,
+    getBulk, 
     failed,
     getLast,
     clear
-} = exoticSlice.actions;
+} = fruitBlkSlice.actions;
 
-export const exoticSelector = state => state.exotic;
+export const fruitBlkSelector = state => state.fruitBulk;
 
-export default exoticSlice.reducer;
+export default fruitBlkSlice.reducer;
 
 
-export function fetchRegExotic(){
+export function fetchBlkFruit(){
     return async (dispatch) => {
         dispatch(clear())
         dispatch(loading())
 
         try{
             const productsRef = firestore()
-            .collection('products')
-            
+                            .collection('products')
+
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('fruit', '==', true).get();
+
+            console.log("fruit bulk length>>>",docLength.docs.length);
+  
+         
             const snapshot = await productsRef
-                        .where('regular', '==', true)
-                        .where('exotic', '==', true)
-                        .limit(5)
-                        .get();
+                    .where('bulk', '==', true)
+                    .where('fruit', '==', true)
+                    .limit(5)
+                    .get();
 
             const last = snapshot.docs[snapshot.docs.length - 1];
 
             dispatch(getLast(last));
-
+           
             if(snapshot.empty){
-                console.log('exotic >>>','products not found')
+                console.log('products not found fruit bulk')
                 dispatch(failed());
                 return;
             }
+
             snapshot.forEach(doc => {
-                dispatch(get(doc.data()));
+                dispatch(getBulk(doc.data()));
             })
-            
+             
         } catch (e) {
             console.log(e);
         }
-      
+
     }
 }
 
-export function fetchRegExoticOnScroll(last) {
+export function fetchBlkFruitOnScroll(last) {
 
 
     return async (dispatch) => {
@@ -93,17 +104,10 @@ export function fetchRegExoticOnScroll(last) {
         const productsRef = firestore()
             .collection('products')
 
-        const docLength = await productsRef
-        .orderBy('productName')
-        .where("regular", '==', true)
-        .where('exotic', '==', true).get();
-
-        console.log("exotic regular length>>>",docLength.docs.length);
-
         const next = productsRef
         .orderBy('productName')
-        .where('regular', '==', true)
-        .where('exotic', '==', true)
+        .where('bulk', '==', true)
+        .where('fruit', '==', true)
         .startAfter(last.data().productName)
         .limit(5);
 
@@ -114,11 +118,11 @@ export function fetchRegExoticOnScroll(last) {
             const lastQuery = snapshot.docs[snapshot.docs.length - 1];
 
             if(snapshot.empty) {
-                console.log("Next collection is empty >>> exotic");
+                console.log("Next collection is empty in fruit bulk");
                 dispatch(failed());
             } else {
                 snapshot.forEach(doc => {
-                    dispatch(get(doc.data()));
+                    dispatch(getBulk(doc.data()));
                 })
             }
         
@@ -131,7 +135,7 @@ export function fetchRegExoticOnScroll(last) {
 
 }
 
-export function exoticClear() {
+export function fruitBulkClear() {
     return async (dispatch) => {
         
         dispatch(clear())

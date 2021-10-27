@@ -6,7 +6,7 @@ export const initialState = {
   vegetableBulk: [],
   loadVegetableBulk: false,
   errorVegetableBulk: false,
-  lastBulk: null,
+  lastVegBulk: null,
 }
 
 const vegetableBlkSlice = createSlice({
@@ -25,7 +25,7 @@ const vegetableBlkSlice = createSlice({
             state.errorVegetableBulk = true;
         },
         getLastBulk: (state, action) => {
-            state.lastBulk = action.payload;
+            state.lastVegBulk = action.payload;
         },
         clear: (state) => {
             Object.assign(state, initialState);
@@ -101,6 +101,13 @@ export function fetchBlkVegOnScroll(last) {
 
         console.log("orderType >>>","bulk")
 
+        const docLength = await productsRef
+        .orderBy('productName')
+        .where("bulk", '==', true)
+        .where('vegetable', '==', true).get();
+
+        console.log("vegetable bulk length>>>",docLength.docs.length);
+
         const next = productsRef
         .orderBy('productName')
         .where("bulk", '==', true)
@@ -115,7 +122,7 @@ export function fetchBlkVegOnScroll(last) {
             const lastQuery = snapshot.docs[snapshot.docs.length - 1];
 
             if(snapshot.empty) {
-                console.log("collection is empty");
+                console.log("Next collection is empty >>> vegetables");
                 dispatch(failed());
             } else {
                 snapshot.forEach(doc => {
@@ -135,11 +142,7 @@ export function fetchBlkVegOnScroll(last) {
 
 export function vegetableBlkClear() {
     return async (dispatch) => {
-            auth()
-            .signOut()
-            .then(() => {
-                dispatch(clear())
-            })
+        dispatch(clear())
         
     }
 }

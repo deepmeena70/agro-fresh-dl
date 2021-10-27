@@ -12,10 +12,7 @@ export default function ExoticScreen({route, navigation}) {
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {exotic, exoticBulk, loadExotic, errorExotic,last} = useSelector(exoticSelector);
-
-    console.log('exotic=>',exotic)
-    console.log('exotic Bulk=>',exoticBulk);
+    const {exotic, loadExotic, errorExotic,lastExotic} = useSelector(exoticSelector);
 
     useEffect(() => {
         dispatch(fetchRegExotic());
@@ -38,10 +35,7 @@ export default function ExoticScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Exotic bulk screen")
-                } 
-                dispatch(fetchRegExoticOnScroll('regular', last));
+                dispatch(fetchRegExoticOnScroll(lastExotic));
             }
           }}
           scrollEventThrottle={300} 

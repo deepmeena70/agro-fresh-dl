@@ -11,7 +11,7 @@ export default function FruitsScreen({route, navigation}) {
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {fruit, fruitBulk, loadFruit, errorFruit, last} = useSelector(fruitSelector);
+    const {fruit, loadFruit, errorFruit, lastFruit} = useSelector(fruitSelector);
 
     useEffect(() => {
         dispatch(fetchRegFruit());
@@ -32,10 +32,7 @@ export default function FruitsScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Fruit bulk screen")
-                } 
-                dispatch(fetchRegFruitOnScroll('regular', last));
+                dispatch(fetchRegFruitOnScroll(lastFruit));
             }
           }}
           scrollEventThrottle={300} 
@@ -46,7 +43,7 @@ export default function FruitsScreen({route, navigation}) {
                 <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate("ProductDetaisl",{item:product})}
+                            onPress={() => navigation.navigate("ProductDetails",{item:product})}
                         >
                             <Image 
                                 source={{ uri:product.imageURL }}

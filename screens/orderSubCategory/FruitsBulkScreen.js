@@ -4,19 +4,19 @@ import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {fruitSelector, fruitClear, fetchRegFruit, fetchRegFruitOnScroll} from '../../features/fruit';
+import {fruitBlkSelector, fruitBlkClear, fetchBlkFruit, fetchBlkFruitOnScroll} from '../../features/fruitBulk';
 
 export default function FruitsBulkScreen({route, navigation}) {
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {fruit, fruitBulk, loadFruit, errorFruit, last} = useSelector(fruitSelector);
+    const {fruitBulk, loadFruitBulk, errorFruitBulk, lastFruitBulk} = useSelector(fruitBlkSelector);
 
 
     useEffect(() => {
-        dispatch(fetchRegFruit('bulk'))
-    }, [dispatch, route.name]);
+        dispatch(fetchBlkFruit())
+    }, [dispatch]);
 
 
     function open() {
@@ -34,10 +34,7 @@ export default function FruitsBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Fruit bulk screen")
-                } 
-                dispatch(fetchRegFruitOnScroll('regular', last));
+                dispatch(fetchBlkFruitOnScroll(lastFruitBulk));
             }
           }}
           scrollEventThrottle={300} 
@@ -48,7 +45,7 @@ export default function FruitsBulkScreen({route, navigation}) {
                 <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>
                         <TouchableOpacity
-                            onPress={() => navigation.navigate("ProductDetaisl",{item:product})}
+                            onPress={() => navigation.navigate("ProductDetails",{item:product})}
                         >
                             <Image 
                                 source={{ uri:product.imageURL }}

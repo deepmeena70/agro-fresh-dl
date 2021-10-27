@@ -4,7 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { exoticSelector, exoticClear, fetchRegExotic, fetchRegExoticOnScroll } from '../../features/exotic';
+import { exoticBlkSelector, exoticBlkClear, fetchBlkExotic, fetchBlkExoticOnScroll } from '../../features/exoticBulk';
 
 export default function ExoticBulkScreen({route, navigation}) {
 
@@ -12,14 +12,11 @@ export default function ExoticBulkScreen({route, navigation}) {
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {exotic, exoticBulk, loadExotic, errorExotic,last} = useSelector(exoticSelector);
-
-    console.log('exotic=>',exotic)
-    console.log('exotic Bulk=>',exoticBulk);
+    const {exoticBulk, loadExoticBulk, errorExoticBulk,lastExoticBulk} = useSelector(exoticBlkSelector);
 
     useEffect(() => {
-        dispatch(fetchRegExotic('bulk'));
-    }, [dispatch, route.name]);
+        dispatch(fetchBlkExotic());
+    }, [dispatch]);
 
     function open() {
     pickerRef.current.focus();
@@ -36,10 +33,7 @@ export default function ExoticBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                if(route.name == 'VegetablesBulk'){
-                    return console.log("Exotic bulk screen")
-                } 
-                dispatch(fetchRegExoticOnScroll('regular', last));
+                dispatch(fetchBlkExoticOnScroll(lastExoticBulk));
             }
           }}
           scrollEventThrottle={300} 

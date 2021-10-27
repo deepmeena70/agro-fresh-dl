@@ -1,13 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
 
 export const initialState = {
   fruit: [],
-  fruitBulk: [],
   loadFruit: false,
   errorFruit: false,
-  last:null
+  lastFruit: null
 }
 
 const fruitSlice = createSlice({
@@ -21,12 +19,8 @@ const fruitSlice = createSlice({
             state.loadFruit = false;
             state.fruit.push(action.payload);
         },
-        getBulk: (state, action) => {
-            state.loadFruit = false;
-            state.fruitBulk.push(action.payload);
-        },
         getLast: (state, action) => {
-            state.last = action.payload; 
+            state.lastFruit = action.payload; 
         },
         failed: (state) => {
             state.loadFruit = false;
@@ -42,7 +36,6 @@ const fruitSlice = createSlice({
 export const {
     loading, 
     get,
-    getBulk, 
     failed,
     getLast,
     clear
@@ -52,8 +45,7 @@ export const fruitSelector = state => state.fruit;
 
 export default fruitSlice.reducer;
 
-
-export function fetchRegFruit(orderType){
+export function fetchRegFruit(){
     return async (dispatch) => {
         dispatch(clear())
         dispatch(loading())
@@ -61,39 +53,35 @@ export function fetchRegFruit(orderType){
         try{
             const productsRef = firestore()
                             .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('fruit', '==', true)
+            .get();
+
+            console.log("fruit regular length>>>",docLength.docs.length);
   
-            let snapshot;
-            
-            if(orderType === 'bulk') {
-                snapshot = await productsRef
-                    .where('bulk', '==', true)
+            const snapshot = await productsRef
+                    .where('regular', '==', true)
                     .where('fruit', '==', true)
                     .limit(5)
                     .get();
 
-            } else {
-                snapshot = await productsRef
-                        .where('regular', '==', true)
-                        .where('fruit', '==', true)
-                        .limit(5)
-                        .get();
-            }
+            const last = snapshot.docs[snapshot.docs.length - 1];
 
+            dispatch(getLast(last));
+            
             if(snapshot.empty){
-                console.log('products not found')
+                console.log('products not found in found in fruits regular')
                 dispatch(failed());
                 return;
             }
-
-            if(orderType === 'bulk') {
-                snapshot.forEach(doc => {
-                    dispatch(getBulk(doc.data()));
-                })
-            } else {
-                snapshot.forEach(doc => {
-                    dispatch(get(doc.data()));
-                })
-            }
+      
+            snapshot.forEach(doc => {
+                dispatch(get(doc.data()));
+            })
+            
         } catch (e) {
             console.log(e);
         }
@@ -101,8 +89,7 @@ export function fetchRegFruit(orderType){
     }
 }
 
-export function fetchRegFruitOnScroll(orderType, last) {
-
+export function fetchRegFruitOnScroll(last) {
 
     return async (dispatch) => {
 
@@ -116,7 +103,7 @@ export function fetchRegFruitOnScroll(orderType, last) {
         const next = productsRef
         .orderBy('productName')
         .where('regular', '==', true)
-        .where('vegetable', '==', true)
+        .where('fruit', '==', true)
         .startAfter(last.data().productName)
         .limit(5);
 
@@ -127,7 +114,7 @@ export function fetchRegFruitOnScroll(orderType, last) {
             const lastQuery = snapshot.docs[snapshot.docs.length - 1];
 
             if(snapshot.empty) {
-                console.log("collection is empty");
+                console.log("Next collection is empty in fruits regular");
                 dispatch(failed());
             } else {
                 snapshot.forEach(doc => {
@@ -146,12 +133,8 @@ export function fetchRegFruitOnScroll(orderType, last) {
 
 export function fruitClear() {
     return async (dispatch) => {
-        
-            auth()
-            .signOut()
-            .then(() => {
-                dispatch(clear())
-            })
+      
+        dispatch(clear())
         
     }
 }

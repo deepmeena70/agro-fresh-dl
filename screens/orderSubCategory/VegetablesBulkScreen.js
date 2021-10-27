@@ -11,7 +11,7 @@ export default function VegetablesBulkScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetableBulk, loadBlkVegetable, errorBlkVegetable, lastBulk} = useSelector(vegetableBlkSelector);
+    const {vegetableBulk, loadBlkVegetable, errorBlkVegetable, lastVegBulk} = useSelector(vegetableBlkSelector);
 
     const {items} = useSelector(cartSelector);
 
@@ -20,14 +20,13 @@ export default function VegetablesBulkScreen({route, navigation}) {
 
     useEffect(() => {
         dispatch(fetchBlkVeg())
-    },[dispatch, route.name]);
+    },[dispatch]);
 
     console.log("route name and route params >>>",route, route.name)
 
     const handleBuy = (item) => {
         console.log('item name =>',item.productName);
         dispatch(addToCart(item, selectedValue));
-        console.log(items);
     }
 
 
@@ -37,7 +36,7 @@ export default function VegetablesBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                return dispatch(fetchBlkVegOnScroll(lastBulk));
+                return dispatch(fetchBlkVegOnScroll(lastVegBulk));
             }
           }}
           scrollEventThrottle={300} 
