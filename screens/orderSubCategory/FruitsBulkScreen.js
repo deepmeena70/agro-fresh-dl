@@ -3,20 +3,105 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {useSelector, useDispatch} from 'react-redux';
-import {fruitBlkSelector, fruitBlkClear, fetchBlkFruit, fetchBlkFruitOnScroll} from '../../features/fruitBulk';
+import {useDispatch} from 'react-redux';
+
+import {addToCart} from '../../features/cart';
+
+import firestore from '@react-native-firebase/firestore';
 
 export default function FruitsBulkScreen({route, navigation}) {
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {fruitBulk, loadFruitBulk, errorFruitBulk, lastFruitBulk} = useSelector(fruitBlkSelector);
+    const initialArray = [];
 
+    const [fruit, setFruit] = useState(initialArray);
+
+    const [last, setLast] = useState();
+
+    const fetchFruit = async () => {
+        console.log('fetch fruit bulk')
+
+        try{
+            const productsRef = firestore()
+            .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('fruit', '==', true).get();
+
+            console.log("fruit bulk length>>>",docLength.docs.length);
+
+            const first = productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('fruit', '==', true)
+            .limit(5); 
+            
+            const snapshot = await first 
+            .get();
+        
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            setLast(lastQuery);
+
+            snapshot.forEach(doc => {
+                setFruit((oldArray) => [...oldArray, doc.data()] )
+            })
+
+            if(snapshot.empty){
+                console.log("fruits >>>",'products not found in bulk')
+                return;
+            }
+
+
+        } catch(e){
+            console.error(e);
+        }
+    }
+
+
+    const fetchNext = async (last) => {
+        if(last === null || last === undefined) {
+            return;
+        }
+
+        const productsRef = firestore()
+            .collection('products')
+
+        const next = productsRef
+        .orderBy('productName')
+        .where("bulk", '==', true)
+        .where('fruit', '==', true)
+        .startAfter(last.data().productName)
+        .limit(5);
+
+        try{
+            const snapshot = await next.get()
+            .catch(err => console.error(err.message));
+
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            if(snapshot.empty) {
+                console.log("Next collection is empty >>> fruit bulk");
+            } else {
+                snapshot.forEach(doc => {
+                    setFruit((oldArray) => [...oldArray, doc.data()] )
+                })
+            }
+          
+            setLast(lastQuery);
+        
+        } catch(e) {
+            console.error(e);
+        }
+    }
 
     useEffect(() => {
-        dispatch(fetchBlkFruit())
-    }, [dispatch]);
+        fetchFruit()
+    }, [route.name]);
 
 
     function open() {
@@ -26,6 +111,11 @@ export default function FruitsBulkScreen({route, navigation}) {
     function close() {
     pickerRef.current.blur();
     }
+
+    const handleBuy = (item) => {
+        console.log('item name =>',item.productName);
+        dispatch(addToCart(item, selectedValue));
+    }
     
     return (
         <ScrollView style={styles.container}
@@ -34,13 +124,13 @@ export default function FruitsBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchBlkFruitOnScroll(lastFruitBulk));
+                fetchNext(last);
             }
           }}
           scrollEventThrottle={300} 
 
         >
-             {fruitBulk.map((product, key) => 
+             {fruit.map((product, key) => 
 
                 <View key={key} style={styles.card}>
                     <View style={styles.productContainer}>
@@ -80,7 +170,7 @@ export default function FruitsBulkScreen({route, navigation}) {
                         </View>
                         <Button 
                         mode="contained" 
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => handleBuy(product)}
                         color="#37c7ad"
                         labelStyle={{ color:"#fff" }}
                         >

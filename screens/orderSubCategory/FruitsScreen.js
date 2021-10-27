@@ -3,19 +3,107 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {useSelector, useDispatch} from 'react-redux';
-import {fruitSelector, fruitClear, fetchRegFruit, fetchRegFruitOnScroll} from '../../features/fruit';
+import {useDispatch} from 'react-redux';
+import {addToCart, cartSelector} from '../../features/cart';
+
+import firestore from '@react-native-firebase/firestore';
 
 export default function FruitsScreen({route, navigation}) {
     const [selectedValue, setSelectedValue] = useState()
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {fruit, loadFruit, errorFruit, lastFruit} = useSelector(fruitSelector);
+
+    const initialArray = [];
+
+    const [fruit, setFruit] = useState(initialArray);
+
+    const [last, setLast] = useState();
+
+    const fetchFruit = async () => {
+        console.log('fetch fruit regular')
+
+        try{
+            const productsRef = firestore()
+            .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('fruit', '==', true).get();
+
+            console.log("fruit regular length>>>",docLength.docs.length);
+
+            const first = productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('fruit', '==', true)
+            .limit(5); 
+            
+            const snapshot = await first 
+            .get();
+        
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            setLast(lastQuery);
+
+            snapshot.forEach(doc => {
+                setFruit((oldArray) => [...oldArray, doc.data()] )
+            })
+
+            if(snapshot.empty){
+                console.log("fruits >>>",'products not found in regular')
+                return;
+            }
+
+
+        } catch(e){
+            console.error(e);
+        }
+    }
+
+
+    const fetchNext = async (last) => {
+        if(last === null || last === undefined) {
+            return;
+        }
+
+        const productsRef = firestore()
+            .collection('products')
+
+        console.log("orderType >>>","regular")
+
+        const next = productsRef
+        .orderBy('productName')
+        .where("regular", '==', true)
+        .where('fruit', '==', true)
+        .startAfter(last.data().productName)
+        .limit(5);
+
+        try{
+            const snapshot = await next.get()
+            .catch(err => console.error(err.message));
+
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            if(snapshot.empty) {
+                console.log("Next collection is empty >>> vegetables");
+            } else {
+                snapshot.forEach(doc => {
+                    setFruit((oldArray) => [...oldArray, doc.data()] )
+                })
+            }
+          
+            setLast(lastQuery);
+        
+        } catch(e) {
+            console.error(e);
+        }
+    }
 
     useEffect(() => {
-        dispatch(fetchRegFruit());
-    }, [dispatch]);
+        fetchFruit()
+    }, [route.name]);
 
     function open() {
     pickerRef.current.focus();
@@ -23,6 +111,11 @@ export default function FruitsScreen({route, navigation}) {
 
     function close() {
     pickerRef.current.blur();
+    }
+
+    const handleBuy = (item) => {
+        console.log('item name =>',item.productName);
+        dispatch(addToCart(item, selectedValue));
     }
     
     return (
@@ -32,7 +125,7 @@ export default function FruitsScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchRegFruitOnScroll(lastFruit));
+                fetchNext(last);
             }
           }}
           scrollEventThrottle={300} 
@@ -78,7 +171,7 @@ export default function FruitsScreen({route, navigation}) {
                         </View>
                         <Button 
                         mode="contained" 
-                        onPress={() => console.log('Pressed')}
+                        onPress={() => handleBuy(product)}
                         color="#37c7ad"
                         labelStyle={{ color:"#fff" }}
                         >

@@ -3,24 +3,110 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {fetchBlkVeg, vegetableBlkSelector, fetchBlkVegOnScroll} from '../../features/vegetableBulk';
 import {addToCart, cartSelector} from '../../features/cart';
 import {useSelector, useDispatch} from 'react-redux';
+
+import firestore from '@react-native-firebase/firestore';
 
 export default function VegetablesBulkScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetableBulk, loadBlkVegetable, errorBlkVegetable, lastVegBulk} = useSelector(vegetableBlkSelector);
+    const initialArray = [];
+
+    const [vegetable, setVegetable] = useState(initialArray);
+
+    const [last, setLast] = useState();
+
+    const fetchVeg = async () => {
+        console.log('fetch veg regular')
+
+        try{
+            const productsRef = firestore()
+            .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('vegetable', '==', true).get();
+
+            console.log("vegetable regular length>>>",docLength.docs.length);
+
+            const first = productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('vegetable', '==', true)
+            .limit(5); 
+            
+            const snapshot = await first 
+            .get();
+        
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            setLast(lastQuery);
+
+            snapshot.forEach(doc => {
+                setVegetable((oldArray) => [...oldArray, doc.data()] )
+            })
+
+            if(snapshot.empty){
+                console.log("vegetables >>>",'products not found in regular')
+                return;
+            }
+
+
+        } catch(e){
+            console.error(e);
+        }
+    }
+
+
+    const fetchNext = async (last) => {
+        if(last === null || last === undefined) {
+            return;
+        }
+
+        const productsRef = firestore()
+            .collection('products')
+
+        const next = productsRef
+        .orderBy('productName')
+        .where("bulk", '==', true)
+        .where('vegetable', '==', true)
+        .startAfter(last.data().productName)
+        .limit(5);
+
+        try{
+            const snapshot = await next.get()
+            .catch(err => console.error(err.message));
+
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            if(snapshot.empty) {
+                console.log("Next collection is empty >>> vegetables Bulk");
+            } else {
+                snapshot.forEach(doc => {
+                    setVegetable((oldArray) => [...oldArray, doc.data()] )
+                })
+            }
+          
+            setLast(lastQuery);
+        
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    useEffect(() => {
+        fetchVeg()
+    }, [route.name]);
 
     const {items} = useSelector(cartSelector);
 
     const [selectedValue, setSelectedValue] = useState();
     const pickerRef = useRef();
 
-    useEffect(() => {
-        dispatch(fetchBlkVeg())
-    },[dispatch]);
+
 
     console.log("route name and route params >>>",route, route.name)
 
@@ -36,13 +122,13 @@ export default function VegetablesBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                return dispatch(fetchBlkVegOnScroll(lastVegBulk));
+                return fetchNext(last);
             }
           }}
           scrollEventThrottle={300} 
           style={styles.container}>
             {
-                vegetableBulk.map((product, key) => 
+                vegetable.map((product, key) => 
 
                     <View style={styles.card} key={key}>
                         <View style={styles.productContainer}>

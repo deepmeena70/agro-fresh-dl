@@ -3,22 +3,110 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'rea
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import {fetchRegVeg, vegetableSelector, fetchRegVegOnScroll} from '../../features/vegetable';
-import {addToCart, cartSelector} from '../../features/cart';
-import {useSelector, useDispatch} from 'react-redux';
+
+import {addToCart} from '../../features/cart';
+import {useDispatch} from 'react-redux';
+
+import firestore from '@react-native-firebase/firestore';
 
 export default function VegetablesScreen({route, navigation}) {
 
     const dispatch = useDispatch();
 
-    const {vegetable, loadVegetable, errorVegetable, lastVeg} = useSelector(vegetableSelector);
+    const initialArray = [];
+
+    const [vegetable, setVegetable] = useState(initialArray);
+
+    const [last, setLast] = useState();
+
+    const fetchVeg = async () => {
+        console.log('fetch veg regular')
+
+        try{
+            const productsRef = firestore()
+            .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('vegetable', '==', true).get();
+
+            console.log("vegetable regular length>>>",docLength.docs.length);
+
+            const first = productsRef
+            .orderBy('productName')
+            .where("regular", '==', true)
+            .where('vegetable', '==', true)
+            .limit(5); 
+            
+            const snapshot = await first 
+            .get();
+        
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            setLast(lastQuery);
+
+            snapshot.forEach(doc => {
+                setVegetable((oldArray) => [...oldArray, doc.data()] )
+            })
+
+            if(snapshot.empty){
+                console.log("vegetables >>>",'products not found in regular')
+                return;
+            }
+
+
+        } catch(e){
+            console.error(e);
+        }
+    }
+
+
+    const fetchNext = async (last) => {
+        if(last === null || last === undefined) {
+            return;
+        }
+
+        const productsRef = firestore()
+            .collection('products')
+
+        console.log("orderType >>>","regular")
+
+        const next = productsRef
+        .orderBy('productName')
+        .where("regular", '==', true)
+        .where('vegetable', '==', true)
+        .startAfter(last.data().productName)
+        .limit(5);
+
+        try{
+            const snapshot = await next.get()
+            .catch(err => console.error(err.message));
+
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            if(snapshot.empty) {
+                console.log("Next collection is empty >>> vegetables regular");
+            } else {
+                snapshot.forEach(doc => {
+                    setVegetable((oldArray) => [...oldArray, doc.data()] )
+                })
+            }
+          
+            setLast(lastQuery);
+        
+        } catch(e) {
+            console.error(e);
+        }
+    }
+
+    useEffect(() => {
+        fetchVeg()
+    }, [route.name]);
 
     const [selectedValue, setSelectedValue] = useState();
     const pickerRef = useRef();
 
-    useEffect(() => {
-        dispatch(fetchRegVeg())
-    },[dispatch]);
 
     console.log("route name and route params >>>",route, route.name)
 
@@ -34,7 +122,8 @@ export default function VegetablesScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchRegVegOnScroll(lastVeg));
+                fetchNext(last);
+
             }
           }}
           scrollEventThrottle={300} 

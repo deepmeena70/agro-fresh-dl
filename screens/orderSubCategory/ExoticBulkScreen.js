@@ -3,8 +3,11 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity} from 'reac
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
-import { useSelector, useDispatch } from 'react-redux';
-import { exoticBlkSelector, exoticBlkClear, fetchBlkExotic, fetchBlkExoticOnScroll } from '../../features/exoticBulk';
+import {useDispatch } from 'react-redux';
+
+import firestore from '@react-native-firebase/firestore';
+
+import {addToCart} from '../../features/cart';
 
 export default function ExoticBulkScreen({route, navigation}) {
 
@@ -12,11 +15,94 @@ export default function ExoticBulkScreen({route, navigation}) {
     const pickerRef = useRef();
 
     const dispatch = useDispatch();
-    const {exoticBulk, loadExoticBulk, errorExoticBulk,lastExoticBulk} = useSelector(exoticBlkSelector);
+    const initialArray = [];
+
+    const [exotic, setExotic] = useState(initialArray);
+
+    const [last, setLast] = useState();
+
+    const fetchExotic = async () => {
+        console.log('fetch exotic bulk')
+
+        try{
+            const productsRef = firestore()
+            .collection('products')
+
+            const docLength = await productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('exotic', '==', true).get();
+
+            console.log("exotic bulk length>>>",docLength.docs.length);
+
+            const first = productsRef
+            .orderBy('productName')
+            .where("bulk", '==', true)
+            .where('exotic', '==', true)
+            .limit(5); 
+            
+            const snapshot = await first 
+            .get();
+        
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            setLast(lastQuery);
+
+            snapshot.forEach(doc => {
+                setExotic((oldArray) => [...oldArray, doc.data()] )
+            })
+
+            if(snapshot.empty){
+                console.log("exotic >>>",'products not found in bulk')
+                return;
+            }
+
+
+        } catch(e){
+            console.error(e);
+        }
+    }
+
+
+    const fetchNext = async (last) => {
+        if(last === null || last === undefined) {
+            return;
+        }
+
+        const productsRef = firestore()
+            .collection('products')
+
+        const next = productsRef
+        .orderBy('productName')
+        .where("bulk", '==', true)
+        .where('exotic', '==', true)
+        .startAfter(last.data().productName)
+        .limit(5);
+
+        try{
+            const snapshot = await next.get()
+            .catch(err => console.error(err.message));
+
+            const lastQuery = snapshot.docs[snapshot.docs.length - 1];
+
+            if(snapshot.empty) {
+                console.log("Next collection is empty >>> exotic bulk");
+            } else {
+                snapshot.forEach(doc => {
+                    setExotic((oldArray) => [...oldArray, doc.data()] )
+                })
+            }
+          
+            setLast(lastQuery);
+        
+        } catch(e) {
+            console.error(e);
+        }
+    }
 
     useEffect(() => {
-        dispatch(fetchBlkExotic());
-    }, [dispatch]);
+        fetchExotic()
+    }, [route.name]);
 
     function open() {
     pickerRef.current.focus();
@@ -26,6 +112,11 @@ export default function ExoticBulkScreen({route, navigation}) {
     pickerRef.current.blur();
     }
 
+    const handleBuy = (item) => {
+        console.log('item name =>',item.productName);
+        dispatch(addToCart(item, selectedValue));
+    }
+
     return (
         <ScrollView style={styles.container}
         onScroll={e => { 
@@ -33,12 +124,12 @@ export default function ExoticBulkScreen({route, navigation}) {
             const yOffset = Math.round(e.nativeEvent.contentOffset.y)
             if(yOffset >= maxOffset) {
                 console.log("scrolled")
-                dispatch(fetchBlkExoticOnScroll(lastExoticBulk));
+                fetchNext(last);
             }
           }}
           scrollEventThrottle={300} 
         >
-        {exoticBulk.map((product, key) => 
+        {exotic.map((product, key) => 
 
             <View key={key} style={styles.card}>
                 <View style={styles.productContainer}>
@@ -78,7 +169,7 @@ export default function ExoticBulkScreen({route, navigation}) {
                     </View>
                     <Button 
                     mode="contained" 
-                    onPress={() => console.log('Pressed')}
+                    onPress={() => handleBuy(product)}
                     color="#37c7ad"
                     labelStyle={{ color:"#fff" }}
                     >
