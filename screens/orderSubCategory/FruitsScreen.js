@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
@@ -19,9 +19,13 @@ export default function FruitsScreen({route, navigation}) {
     const [fruit, setFruit] = useState(initialArray);
 
     const [last, setLast] = useState();
+    const [loading, setLoading] = useState(false);
+
+    const [loadingFailed, setLoadingFailed] = useState(false);
 
     const fetchFruit = async () => {
         console.log('fetch fruit regular')
+        setLoading(true);
 
         try{
             const productsRef = firestore()
@@ -51,8 +55,11 @@ export default function FruitsScreen({route, navigation}) {
                 setFruit((oldArray) => [...oldArray, doc.data()] )
             })
 
+            setLoading(false)
+
             if(snapshot.empty){
                 console.log("fruits >>>",'products not found in regular')
+                setLoading(false)
                 return;
             }
 
@@ -67,6 +74,8 @@ export default function FruitsScreen({route, navigation}) {
         if(last === null || last === undefined) {
             return;
         }
+
+        setLoading(true)
 
         const productsRef = firestore()
             .collection('products')
@@ -88,11 +97,14 @@ export default function FruitsScreen({route, navigation}) {
 
             if(snapshot.empty) {
                 console.log("Next collection is empty >>> vegetables");
+                setLoading(false)
             } else {
                 snapshot.forEach(doc => {
                     setFruit((oldArray) => [...oldArray, doc.data()] )
                 })
             }
+
+            setLoading(false)
           
             setLast(lastQuery);
         
@@ -146,7 +158,13 @@ export default function FruitsScreen({route, navigation}) {
                         <View style={styles.productDescription}>
                             <Text style={ styles.prodTitle }>{product.productName}</Text>
                             <View style={ styles.priceContainer }>
-                                <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                            {
+                                        (!product.discountPrice ?
+                                            <Text style={{ fontSize:12,  }}>₹ {product.sellingPrice}/kg</Text> :
+                                            <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                                               
+                                        )
+                                    }
                                 <Text style = { styles.discountRate }>₹ {product.discountPrice}/kg</Text>
                             </View>
                             <View style={ styles.pickerContainer }>
@@ -182,6 +200,12 @@ export default function FruitsScreen({route, navigation}) {
 
 
             )}
+            {
+                (loading === true)?
+                <ActivityIndicator style={{ marginTop:12 }} size="small" color="#37c4ad" />
+                :
+                null
+            }
         </ScrollView>
     )
 }

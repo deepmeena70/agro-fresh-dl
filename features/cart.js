@@ -32,6 +32,16 @@ const cartSlice = createSlice({
             state.items[index][2]-=0.1;
             console.log('item >>>',state.items[index][0].productName);
         },
+        incrementBasket: (state, action) => {
+            let index = state.items.findIndex(product => product[0].productName === action.payload);
+            state.items[index][2]+=1;
+            console.log('item >>>',state.items[index][0].productName);
+        },
+        decrementBasket: (state, action) => {
+            let index = state.items.findIndex(product => product[0].productName === action.payload);
+            state.items[index][2]-=1;
+            console.log('item >>>',state.items[index][0].productName);
+        },
         clear: (state) => {
             Object.assign(state, initialState);
         }
@@ -44,6 +54,8 @@ export const {
     remove,
     increment,
     decrement,
+    incrementBasket,
+    decrementBasket,
     clear
 } = cartSlice.actions;
 
@@ -65,12 +77,22 @@ export function deleteFromCart (items) {
     }
 }
 
+// value is boolean type
+
 export function changeQty (items, value) {
     return (dispatch) => {
         if(value) {
             return dispatch(increment(items))
         }
         return dispatch(decrement(items))
+    }
+}
+export function changeQtyBasket (items, value) {
+    return (dispatch) => {
+        if(value) {
+            return dispatch(incrementBasket(items))
+        }
+        return dispatch(decrementBasket(items))
     }
 }
 

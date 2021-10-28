@@ -1,5 +1,5 @@
 import React, {useState,useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
 
@@ -20,9 +20,13 @@ export default function ExoticScreen({route, navigation}) {
     const [exotic, setExotic] = useState(initialArray);
 
     const [last, setLast] = useState();
+    const [loading, setLoading] = useState(false);
+
+    const [loadingFailed, setLoadingFailed] = useState(false);
 
     const fetchExotic = async () => {
         console.log('fetch exotic regular')
+        setLoading(true)
 
         try{
             const productsRef = firestore()
@@ -54,8 +58,11 @@ export default function ExoticScreen({route, navigation}) {
 
             if(snapshot.empty){
                 console.log("exotic >>>",'products not found in regular')
+                setLoading(false)
                 return;
             }
+
+            setLoading(false);
 
 
         } catch(e){
@@ -68,6 +75,8 @@ export default function ExoticScreen({route, navigation}) {
         if(last === null || last === undefined) {
             return;
         }
+
+        setLoading(true)
 
         const productsRef = firestore()
             .collection('products')
@@ -87,6 +96,7 @@ export default function ExoticScreen({route, navigation}) {
 
             if(snapshot.empty) {
                 console.log("Next collection is empty >>> exotic regular");
+                setLoading(false)
             } else {
                 snapshot.forEach(doc => {
                     setExotic((oldArray) => [...oldArray, doc.data()] )
@@ -94,6 +104,8 @@ export default function ExoticScreen({route, navigation}) {
             }
           
             setLast(lastQuery);
+
+            setLoading(false)
         
         } catch(e) {
             console.error(e);
@@ -148,7 +160,13 @@ export default function ExoticScreen({route, navigation}) {
                     <View style={styles.productDescription}>
                         <Text style={ styles.prodTitle }>{product.productName}</Text>
                         <View style={ styles.priceContainer }>
-                            <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                        {
+                                        (!product.discountPrice ?
+                                            <Text style={{ fontSize:12,  }}>₹ {product.sellingPrice}/kg</Text> :
+                                            <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                                               
+                                        )
+                                    }
                             <Text style = { styles.discountRate }>₹ {product.discountPrice}/kg</Text>
                         </View>
                         <View style={ styles.pickerContainer }>
@@ -182,6 +200,13 @@ export default function ExoticScreen({route, navigation}) {
 
 
         )}
+
+        {
+            (loading === true)?
+            <ActivityIndicator style={{ marginTop:12 }} size="small" color="#37c4ad" />
+            :
+            null
+        }
         </ScrollView>
     )
 }

@@ -50,19 +50,42 @@ export default function CartScreen({route, navigation}) {
                         
                         <View style={styles.card} key={key}>
                             <View style={styles.productContainer}>
-                                <Image 
-                                    source={{ uri:product[0].imageURL }}
-                                    style={ styles.thumbnail }
-                                />
+                                {
+                                    product[0].productCategory?
+                                    <Image 
+                                        source={{ uri:'https://imgcdn.floweraura.com/fruitilicious-basket-9932240co.jpg' }}
+                                        style={ styles.thumbnail }
+                                    />
+                                    :
+                                    <Image 
+                                        source={{ uri:product[0].imageURL }}
+                                        style={ styles.thumbnail }
+                                    />
+                                }
                                 <View style={styles.productDescription}>
                                     <Text style={ styles.prodTitle }>{product[0].productName}</Text>
                                     <View style={ styles.priceContainer }>
-                                        <Text style={ styles.rate }>₹ {product[0].sellingPrice}/kg</Text>
-                                        <Text style = { styles.discountRate }>₹ {product[0].discountPrice}/kg</Text>
+                                        {
+                                            product[0].discountPrice?
+                                            <Text style={ styles.rate }> {"₹" +product[0].sellingPrice+"/kg"}</Text>
+                                            :
+                                            <Text style={ {fontSize:12} }>{`₹${product[0].sellingPrice}/kg`}</Text>
+                                        }
+                                        {
+                                            product[0].discountPrice?
+                                            <Text style = { styles.discountRate }>₹ {product[0].discountPrice}/kg</Text>
+                                            :
+                                            null
+                                        }
                                     </View>
                                     <View style={ styles.pickerContainer }>
-                                        <Text style={{ color:'grey' }}> 
-                                        {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                                        {
+                                            product[0].productCategory?
+                                            <Text>{product[0].bucketItems.toString().replace(/,/g,'+')}</Text>
+                                            :
+                                            <Text style={{ color:'grey' }}> 
+                                            {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                                        }
                                     </View>
                                 </View>
                             </View>

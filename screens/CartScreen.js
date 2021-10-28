@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import { Button, IconButton, Colors, TextInput } from 'react-native-paper';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {cartSelector, deleteFromCart, changeQty} from '../features/cart';
+import {cartSelector, deleteFromCart, changeQty, changeQtyBasket} from '../features/cart';
 import {getCartDetails} from '../features/cartDetails';
 
 import SecondaryHeader from '../components/SecondaryHeader'
@@ -29,14 +29,24 @@ export default function CartScreen({route, navigation}) {
         dispatch(deleteFromCart(name))
     }
     
-    const handlePlus = (name) => {
-        console.log('plus=>', name);
-        dispatch(changeQty(name, true));
+    const handlePlus = (item) => {
+        console.log('plus=>', item.productName);
+        if(item.productCategory) {
+            return dispatch(changeQtyBasket(item.productName, true))
+        }
+        dispatch(changeQty(item.productName, true));
+
+        console.log('plus called', items)
     }
 
-    const handleMinus = (name) => {
-        console.log('minus=>', name);
-        dispatch(changeQty(name, false));
+    const handleMinus = (item) => {
+        console.log('minus=>', item.productName);
+        if(item.productCategory) {
+            return dispatch(changeQtyBasket(item.productName, false))
+        }
+        dispatch(changeQty(item.productName, false));
+
+        console.log('Minus called',items)
     }
 
     const getSubTotal = (orderType) => {
@@ -45,18 +55,23 @@ export default function CartScreen({route, navigation}) {
         if(orderType === 'regular') {
             items.map(product => {
                 if(product[0].regular){
-                    total += Number(product[0].sellingPrice);
-                    total = product[2]*total; 
+                    total += Number(product[0].sellingPrice)*product[2];
+                    console.log('product 2>>>',product[2]);
+                }
+            })
+        } else if (orderType === 'bulk')  {
+            items.map(product => {
+                if(product[0].bulk){
+                    total += Number(product[0].sellingPrice)*product[2];
                 }
             })
         } else {
             items.map(product => {
-                if(product[0].bulk){
-                    total += Number(product[0].sellingPrice);
-                    total = product[2]*total;  
+                if(product[0].productCategory){
+                    total += Number(product[0].sellingPrice)*product[2];
                 }
             })
-        }
+        } 
 
         return total;
     }
@@ -67,16 +82,14 @@ export default function CartScreen({route, navigation}) {
         if(orderType === 'regular') {
             items.map(product => {
                 if(product[0].regular) {
-                    totalDiscount += Number(product[0].discountPrice); 
-                    totalDiscount = product[2]*totalDiscount; 
+                    totalDiscount += Number(product[0].discountPrice)*product[2]; 
                 }
             })
             totalDiscount = getSubTotal('regular')-totalDiscount;
         } else {
             items.map(product => {
                 if(product[0].bulk) {
-                    totalDiscount += Number(product[0].discountPrice);
-                    totalDiscount = product[2]*totalDiscount; 
+                    totalDiscount += Number(product[0].discountPrice)*product[2];
                 }
             })
             totalDiscount = getSubTotal('bulk')-totalDiscount;
@@ -90,7 +103,6 @@ export default function CartScreen({route, navigation}) {
         try{
             offerCodeDiscount = route.params.item.discount;
         } catch(e){
-            console.log(e);
             offerCodeDiscount = 0;
         }
 
@@ -99,7 +111,7 @@ export default function CartScreen({route, navigation}) {
 
     const getGrandTotal = () => {
       
-        const total =  getTotal('regular') + getTotal();
+        const total =  getTotal('regular') + getTotal('bulk') + getTotal();
 
         const deliveryCharge = (typeof getDeliveryCharge() === 'string') ? 0 : getDeliveryCharge();
 
@@ -109,18 +121,21 @@ export default function CartScreen({route, navigation}) {
     }
 
     const getAllSaving = () => {
-        return getTotalDiscount('regular') + getTotalDiscount() + [getTotal('regular') + getTotal()]*getOfferDiscount()*0.01;
+        return getTotalDiscount('regular') + getTotalDiscount() + [getTotal('regular') + getTotal('bulk')]*getOfferDiscount()*0.01;
     }
 
     const getTotal = (orderType) => {
         if(orderType === 'regular') {
             return getSubTotal('regular') - getTotalDiscount('regular');
+        } else if(orderType === 'bulk') {
+            return getSubTotal('bulk') - getTotalDiscount('bulk');
+        } else {
+            return getSubTotal();
         }
-        return getSubTotal('bulk') - getTotalDiscount('bulk');
     }
 
     const getDeliveryCharge = () => {
-        const total = getTotal('regular') + getTotal();
+        const total = getTotal('regular') + getTotal('bulk') + getTotal();
         if(total === 0) {
             return 0;
         }
@@ -136,7 +151,6 @@ export default function CartScreen({route, navigation}) {
             try{
                 return route.params.item.offerCode;
             } catch(e){
-                console.log(e);
                 return code;
             }
         }
@@ -146,13 +160,13 @@ export default function CartScreen({route, navigation}) {
     const handleProceed = () => {
         const details = {
             'items': items,
-            'subTotalRegular': getSubTotal('regular'),
             'totalDiscountRegular': getTotalDiscount('regular'),
+            'subTotalRegular': getSubTotal('regular'),
             'totalRegular': getTotal('regular'),
-            'subTotalBulk': getSubTotal(),
+            'subTotalBulk': getSubTotal('bulk'),
+            'totalBulk': getTotal('bulk'),
             'totalDiscountBulk': getTotalDiscount(),
             'offerCode': getCode(),
-            'totalBulk': getTotal(),
             'offerDiscount': getOfferDiscount(),
             'deliveryCharge': getDeliveryCharge(),
             'grandTotal' : getGrandTotal(),
@@ -180,23 +194,62 @@ export default function CartScreen({route, navigation}) {
                 {
                 items.map((product, key) => 
                     
-                    <View style={styles.card} key={key}>
+                    <View style={product[0].productCategory?styles.cardFreshBasket:styles.card} key={key}>
                         <View style={styles.productContainer}>
-                            <Image 
-                                source={{ uri:product[0].imageURL }}
-                                style={ styles.thumbnail }
-                            />
+                            {
+                                product[0].productCategory?
+                                <Image 
+                                    source={{ uri:'https://imgcdn.floweraura.com/fruitilicious-basket-9932240co.jpg' }}
+                                    style={ styles.thumbnail }
+                                />
+                                :
+                                <Image 
+                                    source={{ uri:product[0].imageURL }}
+                                    style={ styles.thumbnail }
+                                />
+                            }
                             <View style={styles.productDescription}>
                                 <Text style={ styles.prodTitle }>{product[0].productName}</Text>
                                 <View style={ styles.priceContainer }>
-                                    <Text style={ styles.rate }>₹ {product[0].sellingPrice}/kg</Text>
-                                    <Text style = { styles.discountRate }>₹ {product[0].discountPrice}/kg</Text>
+                                    {
+                                        (!product[0].discountPrice ?
+                                            <Text style={{ fontSize:12,  }}>₹ {product[0].sellingPrice}/
+                                            {
+                                                product[0].productCategory?
+                                                "unit": "kg"
+                                            }
+                                            </Text> :
+                                            <Text style={ styles.rate }>₹ {product[0].sellingPrice}/
+                                            {
+                                                product[0].productCategory?
+                                                "unit": "kg"
+                                            }
+                                            </Text>
+                                               
+                                        )
+                                    }
+                                    {
+                                        product[0].productCategory?
+                                        null
+                                        :
+                                        <Text style = { styles.discountRate }> {(product[0].discountPrice)?"₹"+product[0].discountPrice+"/kg":null}</Text>
+                                    }
                                 </View>
                                 <View style={ styles.pickerContainer }>
-                                    <Text style={{ color:'grey' }}> 
-                                    {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                                    {
+                                        product[0].productCategory?
+                                        <Text>{product[0].bucketItems.toString().replace(/,/g,"+")}</Text>
+                                        :
+                                        <Text style={{ color:'grey' }}> 
+                                        {product[1] === undefined ? 'No Packaging' : `Packaging of ${product[1]}`}</Text>
+                                    }
                                 </View>
-                                <Text style={ styles.minimumQty }>Minimum Quantity {product[0].minOrderQty}kgs</Text>
+                                {   
+                                    product[0].minOrderQty?
+                                    <Text style={ styles.minimumQty }>Minimum Quantity {product[0].minOrderQty}kgs</Text>
+                                    :
+                                    null
+                                }
                             </View>
                             <View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
@@ -204,14 +257,14 @@ export default function CartScreen({route, navigation}) {
                                         icon="minus-circle"
                                         color={Colors.red500}
                                         size={20}
-                                        onPress={() => handleMinus(product[0].productName)}
+                                        onPress={() => handleMinus(product[0])}
                                     />
                                     <Text>{product[2].toFixed(1)}</Text>
                                     <IconButton
                                         icon="plus-circle"
                                         color="#37c7ad"
                                         size={20}
-                                        onPress={() => handlePlus(product[0].productName)}
+                                        onPress={() => handlePlus(product[0])}
                                     />
                                 </View>
                                 <View style={{ flex:1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}>
@@ -291,7 +344,7 @@ export default function CartScreen({route, navigation}) {
 
     
             {
-                getSubTotal() > 0 &&
+                getSubTotal('bulk') > 0 &&
 
                 <View style={styles.cartDetails}>
                     <View style={styles.cartDetailsRow}>
@@ -315,7 +368,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:15 }}>Subtotal</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:15 }}>₹{getSubTotal().toFixed(2)}</Text>
+                            <Text style={{ fontSize:15 }}>₹{getSubTotal('bulk').toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={styles.cartDetailsRow}>
@@ -323,7 +376,7 @@ export default function CartScreen({route, navigation}) {
                             <Text style={{ fontSize:18 }}>Total</Text>
                         </View>
                         <View style={{flex:1, alignItems:'flex-end'}}>
-                            <Text style={{ fontSize:18 }}>₹{getTotal().toFixed(2)}</Text>
+                            <Text style={{ fontSize:18 }}>₹{getTotal('bulk').toFixed(2)}</Text>
                         </View>
                     </View>
                 </View> 
@@ -402,6 +455,19 @@ const styles = StyleSheet.create({
     card:{
         marginTop:12,
         height:110,
+        width:"98%",
+        backgroundColor:"white",
+        borderRadius:1,
+        padding:6,
+        elevation:10,
+        shadowColor: '#000',
+        shadowOffset: { width: 3, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 1, 
+    },
+    cardFreshBasket:{
+        marginTop:12,
+        height:130,
         width:"98%",
         backgroundColor:"white",
         borderRadius:1,

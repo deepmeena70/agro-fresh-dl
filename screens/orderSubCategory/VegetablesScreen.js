@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import { Button } from 'react-native-paper';
-
 
 import {addToCart} from '../../features/cart';
 import {useDispatch} from 'react-redux';
@@ -19,8 +18,14 @@ export default function VegetablesScreen({route, navigation}) {
 
     const [last, setLast] = useState();
 
+    const [loading, setLoading] = useState(false);
+
+    const [loadingFailed, setLoadingFailed] = useState(false);
+
     const fetchVeg = async () => {
         console.log('fetch veg regular')
+
+        setLoading(true);
 
         try{
             const productsRef = firestore()
@@ -50,8 +55,11 @@ export default function VegetablesScreen({route, navigation}) {
                 setVegetable((oldArray) => [...oldArray, doc.data()] )
             })
 
+            setLoading(false);
+
             if(snapshot.empty){
                 console.log("vegetables >>>",'products not found in regular')
+                setLoading(false);
                 return;
             }
 
@@ -66,6 +74,8 @@ export default function VegetablesScreen({route, navigation}) {
         if(last === null || last === undefined) {
             return;
         }
+
+        setLoading(true);
 
         const productsRef = firestore()
             .collection('products')
@@ -87,11 +97,14 @@ export default function VegetablesScreen({route, navigation}) {
 
             if(snapshot.empty) {
                 console.log("Next collection is empty >>> vegetables regular");
+                setLoading(false);
             } else {
                 snapshot.forEach(doc => {
                     setVegetable((oldArray) => [...oldArray, doc.data()] )
                 })
             }
+
+            setLoading(false);
           
             setLast(lastQuery);
         
@@ -146,7 +159,13 @@ export default function VegetablesScreen({route, navigation}) {
                             <View style={styles.productDescription}>
                                 <Text style={ styles.prodTitle }>{product.productName}</Text>
                                 <View style={ styles.priceContainer }>
-                                    <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                                {
+                                        (!product.discountPrice ?
+                                            <Text style={{ fontSize:12,  }}>₹ {product.sellingPrice}/kg</Text> :
+                                            <Text style={ styles.rate }>₹ {product.sellingPrice}/kg</Text>
+                                               
+                                        )
+                                    }
                                     <Text style = { styles.discountRate }>₹ {product.discountPrice}/kg</Text>
                                 </View>
                                 <View style={ styles.pickerContainer }>
@@ -180,6 +199,13 @@ export default function VegetablesScreen({route, navigation}) {
 
                     )
             }
+
+        {
+            (loading === true)?
+            <ActivityIndicator style={{ marginTop:12 }} size="small" color="#37c4ad" />
+            :
+            null
+        }
         
         </ScrollView>
     )
