@@ -1,22 +1,51 @@
 import React,{useState, useEffect} from 'react'
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ActivityIndicator} from 'react-native'
 import { TextInput } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import {searchSelector, fetchSearch} from '../features/search'
 import { Card, Title, Paragraph } from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
 
 export default function ProductSearchScreen({navigation}) {
     const [text, setText] = useState('');
 
-    const {searching, searchItems} = useSelector(searchSelector);
+    const initialArr = [];
 
-    const dispatch = useDispatch();
+    const [searchItems, setSearchItems] = useState(initialArr);
+    const [loading, setLoading] = useState(false);
 
-    const searchIn = (text) => {
-        console.log("searching", searching, searchItems, text);
-        dispatch(fetchSearch(text));
+    const [loadingFailed, setLoadingFailed] = useState(false);
+
+    const fetchSearch = async () => {
+        setLoading(true)
+        setLoadingFailed(false)
+        const docRef = firestore().collection("products");
+
+        const searchStr = text.charAt(0).toUpperCase() + text.slice(1);
+
+        const snapshot = await docRef
+        .where("productName", "==", searchStr)
+        .get()
+        .catch((e) => console.log(e));
+
+        if(snapshot.docs.length > 0) {
+            setLoadingFailed(false)
+        }
+
+        if(snapshot.empty) {
+            setLoading(false)
+            setLoadingFailed(true)
+            return console.log(text,"Product not found in search")
+        }
+
+        snapshot.forEach(doc => {
+            setSearchItems((oldArray) => [...oldArray, doc.data()] )
+        })
+        setLoading(false)
     }
 
+    useEffect(() => {
+        setSearchItems(initialArr);
+        fetchSearch()
+    },[text])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -26,7 +55,6 @@ export default function ProductSearchScreen({navigation}) {
                     value={text}
                     onChangeText={(text) => {
                         setText(text)
-                        searchIn(text)
                     }}
                     placeholder="Search product"
                     mode="outlined"
@@ -55,6 +83,19 @@ export default function ProductSearchScreen({navigation}) {
                     </Card>
                 </View>
             </View>
+            {
+                (loading === true)?
+                <ActivityIndicator style={{ marginTop:12 }} size="small" color="#37c4ad" />
+                :
+                null
+            }
+            {
+                loadingFailed?
+                <View style={{ flex:1, alignItems: 'center', justifyContent: 'center'}}>
+                    <Text style={{ color: "lightgrey", fontSize: 22 }}>Not found</Text>
+                </View>
+                : null
+            }
         </SafeAreaView>
     )
 }
