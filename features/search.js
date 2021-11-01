@@ -44,7 +44,7 @@ export function fetchSearch(text) {
         const snapshot = await docRef.where("productName","==", text).get().then(dispatch(clear()));
 
         if(snapshot.empty) {
-            return console.log(text,"Product not found in search")
+            return console.log(text,"Product not found in search");
         }
 
         snapshot.forEach(doc => {
