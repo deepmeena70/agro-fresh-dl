@@ -8,7 +8,6 @@ import {cartDetailsSelector, clearCartDetails} from '../features/cartDetails';
 import {userSelector} from '../features/user';
 import {useSelector, useDispatch} from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
-import AllInOneSDKManager from 'paytm_allinone_react-native';
 import firestore from '@react-native-firebase/firestore';
 
 import {API_URL} from '../config';
@@ -41,7 +40,7 @@ export default function PaymentOptions({navigation}) {
                 description: 'Credits towards AgroFreshDL',
                 image: 'https://i.imgur.com/3g7nmJC.png',
                 currency: 'INR',
-                key: 'rzp_test_UBjdvnwSJMGRzh',
+                key: 'rzp_test_H6pCRj9KnCtALd',
                 amount: order.amount,
                 name: 'AgroFreshDL',
                 order_id: order.id,
@@ -90,35 +89,6 @@ export default function PaymentOptions({navigation}) {
   
     }
 
-
-    const [mid, setMid] = useState('AliSub58582630351896');
-    const [orderId, setOrderId] = useState();
-    const [amount, setAmount] = useState('1');
-    const [tranxToken, setTranxToken] = useState('b9097bda72af4db0a9aa2d00e58a7d451594201196818');
-    const [showToast, setShowToast] = useState('');
-    const [isStaging, setIsStaging] = useState(false);
-    const [appInvokeRestricted, setIsAppInvokeRestricted] = useState(false);
-    const [result, setResult] = useState('');
-
-
-    const paytmHandler = () => {
-        AllInOneSDKManager.startTransaction(
-            orderId,
-            mid,
-            tranxToken,
-            amount,
-            '',
-            isStaging,
-            appInvokeRestricted,
-           )
-           .then((result) => {
-            updateUI(result);
-           })
-           .catch((err) => {
-            handleError(err);
-           });
-    }
-
     console.log(cartDetails);
 
 
@@ -165,9 +135,6 @@ export default function PaymentOptions({navigation}) {
     const handleContinue = () => {
         console.log("continue")
         switch(checked){
-            case 'paytm':
-                paytmHandler();
-                break;
             case 'card':
                 cardHandler();
                 break;
@@ -181,14 +148,6 @@ export default function PaymentOptions({navigation}) {
         <View style={styles.container}>
             <SecondaryHeader navigation={navigation} screenName="Payment Options"/>
             <View style={{ flex:1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                    <RadioButton
-                        value="paytm"
-                        status={ checked === 'paytm' ? 'checked' : 'unchecked' }
-                        onPress={() => setChecked('paytm')}
-                    />
-                    <Text style={{ fontSize:18 }}>Paytm</Text>
-                </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                     <RadioButton
                         value="card"

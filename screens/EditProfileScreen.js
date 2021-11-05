@@ -112,7 +112,7 @@ export default function EditProfileScreen({navigation}) {
                   .linkWithCredential(credential)
                   .catch(err => {
                       console.error(err.message);
-                      showToastWithGravityAndOffset("Already Verified")
+                      showToastWithGravityAndOffset(err.message)
                   });
               } catch (error) {
                 if (error.code == 'auth/invalid-verification-code') {
@@ -189,10 +189,10 @@ export default function EditProfileScreen({navigation}) {
                 selectedState:state,
                 selectedCity:city,
                 pincode
-            }).then(() => {
-                console.log('delivery address updated successfully')
-                navigation.navigate('Account');
             })
+
+            console.log('delivery address updated successfully')
+            navigation.navigate('Account');
     }
 
 

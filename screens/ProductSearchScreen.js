@@ -14,7 +14,8 @@ export default function ProductSearchScreen({navigation}) {
 
     const searchIn = (text) => {
         console.log("searching", searching, searchItems, text);
-        dispatch(fetchSearch(text));
+        const searchText = text.charAt(0).toUpperCase() + text.slice(1);
+        dispatch(fetchSearch(searchText));
     }
 
 

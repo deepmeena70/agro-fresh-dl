@@ -187,14 +187,23 @@ export default function FruitsScreen({route, navigation}) {
                                 Minimum Quantity {product.minOrderQty}kgs
                             </Text>
                         </View>
-                        <Button 
-                        mode="contained" 
-                        onPress={() => handleBuy(product)}
-                        color="#37c7ad"
-                        labelStyle={{ color:"#fff" }}
-                        >
-                            Buy
-                        </Button>
+                        <View>
+                                {
+                                   product.quantity > 0 ?
+                                   <Button 
+                                   mode="contained" 
+                                   onPress={() => {handleBuy(product)}}
+                                   color="#37c7ad"
+                                   labelStyle={{ color:"#fff" }}
+                                   >
+                                       buy
+                                   </Button>
+                                   :
+                                    <View>
+                                        <Text style={{ color:'red' }}>Out of stock</Text>
+                                    </View>
+                                }
+                            </View>
                     </View>
                 </View>
 

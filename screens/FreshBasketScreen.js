@@ -149,15 +149,25 @@ export default function FreshBasketScreen({route, navigation}) {
                                                 {item.bucketItems.toString().replace(/,/g,"+")}
                                             </Text>
                                         </View>
+                                  
                                     </View>
-                                    <Button 
-                                    mode="contained" 
-                                    onPress={() => handleBuy(item)}
-                                    color="#37c7ad"
-                                    labelStyle={{ color:"#fff" }}
-                                    >
-                                        Buy
-                                    </Button>
+                                    <View>
+                                        {
+                                        (item.bucketQty > 0) ?
+                                        <Button 
+                                        mode="contained" 
+                                        onPress={() => {handleBuy(item)}}
+                                        color="#37c7ad"
+                                        labelStyle={{ color:"#fff" }}
+                                        >
+                                            buy
+                                        </Button>
+                                        :
+                                            <View>
+                                                <Text style={{ color:'red' }}>Out of stock</Text>
+                                            </View>
+                                        }
+                                    </View>
                                 </View>
                             </View>
                     })
